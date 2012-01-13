@@ -50,6 +50,7 @@ char * ReadFile (const char *filename)
         buffer = realloc (buffer, len+r);
         if (buffer == NULL) {
             /* out of memory */
+            free(oldbuffer);
             close(fd);
             return NULL;
         }
@@ -57,10 +58,12 @@ char * ReadFile (const char *filename)
         len += r;
     }
 
+    oldbuffer = buffer;
     buffer = realloc (buffer, len+1);
     if (buffer == NULL)
     {
         /* out of memory */
+        free(oldbuffer);
         close(fd);
         return NULL;
     }

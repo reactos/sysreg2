@@ -37,6 +37,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     if (tcgetattr(STDIN_FILENO, &ttyattr) < 0)
     {
         SysregPrintf("tcgetattr failed with error %d\n", errno);
+        close(ttyfd);
         return Ret;
     }
 
@@ -51,6 +52,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawattr) < 0)
     {
         SysregPrintf("tcsetattr failed with error %d\n", errno);
+        close(ttyfd);
         return Ret;
     }
 
