@@ -32,7 +32,8 @@
 #define NUM_STAGES                  3
 
 #define TYPE_KVM                    0
-#define TYPE_VMWARE                 1
+#define TYPE_VMWARE_PLAYER          1
+#define TYPE_VMWARE_GSX             2
 
 typedef struct _stage
 {

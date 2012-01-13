@@ -184,10 +184,20 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
-    if (AppSettings.VMType == TYPE_KVM)
-        vConn = virConnectOpen("qemu:///session");
-    else if (AppSettings.VMType == TYPE_VMWARE)
-        vConn = virConnectOpen("vmwareplayer:///session");
+    switch (AppSettings.VMType)
+    {
+        case TYPE_KVM:
+            vConn = virConnectOpen("qemu:///session");
+            break;
+
+        case TYPE_VMWARE_PLAYER:
+            vConn = virConnectOpen("vmwareplayer:///session");
+            break;
+
+        case TYPE_VMWARE_GSX:
+            vConn = virConnectOpenAuth("gsx://localhost", virConnectAuthPtrDefault, 0);
+            break;
+    }
 
     if (IsVirtualMachineRunning(vConn, AppSettings.Name))
     {
@@ -210,7 +220,8 @@ int main(int argc, char **argv)
         sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM",
                 AppSettings.HardDiskImage, AppSettings.ImageSize);
     }
-    else if (AppSettings.VMType == TYPE_VMWARE)
+    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER ||
+             AppSettings.VMType == TYPE_VMWARE_GSX)
     {
         sprintf(qemu_img_cmdline, "qemu-img create -f vmdk %s %dM",
                 AppSettings.HardDiskImage, AppSettings.ImageSize);

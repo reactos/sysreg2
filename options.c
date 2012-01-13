@@ -52,8 +52,10 @@ bool LoadSettings(const char* XmlConfig)
     obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@type)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_STRING))
     {
-        if (strcasecmp(obj->stringval, "vmware") == 0)
-            AppSettings.VMType = TYPE_VMWARE;
+        if (strcasecmp(obj->stringval, "vmwareplayer") == 0)
+            AppSettings.VMType = TYPE_VMWARE_PLAYER;
+        else if (strcasecmp(obj->stringval, "vmwaregsx") == 0)
+            AppSettings.VMType = TYPE_VMWARE_GSX;
     }
     if (obj)
         xmlXPathFreeObject(obj);
