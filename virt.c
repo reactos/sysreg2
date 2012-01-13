@@ -69,9 +69,9 @@ bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name)
     ids = malloc(sizeof(int) * maxids);
     if (!ids)
         return false;
-    
+
     numids = virConnectListDomains(vConn, &ids[0], maxids);
-    if (numids > -1)    
+    if (numids > -1)
     {
         int i;
         for(i=0; i<numids; i++)
@@ -82,7 +82,7 @@ bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name)
             {
                 virDomainFree(vDomPtr);
                 free(ids);
-                return true; 
+                return true;
             }
             virDomainFree(vDomPtr);
         }
@@ -117,8 +117,8 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
         return NULL;
 
     obj = xmlXPathEval(BAD_CAST "/domain/os/boot", ctxt);
-    if ((obj != NULL) && (obj->type == XPATH_NODESET) 
-            && (obj->nodesetval != NULL) && (obj->nodesetval->nodeTab != NULL)) 
+    if ((obj != NULL) && (obj->type == XPATH_NODESET)
+            && (obj->nodesetval != NULL) && (obj->nodesetval->nodeTab != NULL))
     {
         xmlSetProp(obj->nodesetval->nodeTab[0], "dev", BootDevice);
     }
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
     }
 
     /* Create a new HD image */
-    sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM", 
+    sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM",
             AppSettings.HardDiskImage, AppSettings.ImageSize);
     FILE* p = popen(qemu_img_cmdline, "r");
     char buf[100];

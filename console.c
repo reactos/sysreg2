@@ -55,7 +55,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     }
 
     for(;;)
-    { 
+    {
         struct pollfd fds[] = {
             { STDIN_FILENO, POLLIN, 0 },
             { ttyfd, POLLIN, 0 },

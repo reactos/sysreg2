@@ -31,6 +31,9 @@
 #define EXIT_DONT_CONTINUE          2
 #define NUM_STAGES                  3
 
+#define TYPE_KVM                    0
+#define TYPE_VMWARE                 1
+
 typedef struct _stage
 {
     char BootDevice[8];
@@ -67,8 +70,8 @@ void SysregPrintf(const char* format, ...);
 /* options.c */
 bool LoadSettings(const char* XmlConfig);
 
-/* console.c */	
-int ProcessDebugData(const char* tty, int timeout, int stage);  
+/* console.c */
+int ProcessDebugData(const char* tty, int timeout, int stage);
 
 /* raddr2line.c */
 void InitializeModuleList();

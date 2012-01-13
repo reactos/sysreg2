@@ -137,5 +137,3 @@ bool LoadSettings(const char* XmlConfig)
     xmlXPathFreeContext(ctxt);
     return true;
 }
-
-

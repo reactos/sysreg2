@@ -34,12 +34,12 @@ char * ReadFile (const char *filename)
     char b[1024];
 
     fd = open (filename, O_RDONLY);
-    if (fd == -1) 
+    if (fd == -1)
         return NULL;
 
     for (;;) {
         r = read (fd, b, sizeof b);
-        if (r == -1) 
+        if (r == -1)
         {
           if (buffer) free (buffer);
           close(fd);
@@ -58,7 +58,7 @@ char * ReadFile (const char *filename)
     }
 
     buffer = realloc (buffer, len+1);
-    if (buffer == NULL) 
+    if (buffer == NULL)
     {
         /* out of memory */
         close(fd);
