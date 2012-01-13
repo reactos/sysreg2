@@ -1,5 +1,8 @@
 <settings vm="ReactOS" file="/opt/buildbot/sysreg2/reactos.xml">
 	<general>
+		<!-- Use KVM or VMware -->
+		<vm type="kvm"/>
+
 		<!-- kill the VM after n milliseconds without debug msg -->
 		<timeout ms="20000"/>
 

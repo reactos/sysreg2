@@ -51,6 +51,7 @@ typedef struct _Settings
     stage Stage[3];
     unsigned int MaxCacheHits;
     unsigned int MaxRetries;
+    unsigned int VMType;
 }
 Settings;
 

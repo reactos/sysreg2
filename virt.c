@@ -183,7 +183,11 @@ int main(int argc, char **argv)
         SysregPrintf("Cannot load configuration file\n");
         goto cleanup;
     }
-    vConn = virConnectOpen("qemu:///session");
+
+    if (AppSettings.VMType == TYPE_KVM)
+        vConn = virConnectOpen("qemu:///session");
+    else if (AppSettings.VMType == TYPE_VMWARE)
+        vConn = virConnectOpen("vmwareplayer:///session");
 
     if (IsVirtualMachineRunning(vConn, AppSettings.Name))
     {
@@ -201,8 +205,17 @@ int main(int argc, char **argv)
     }
 
     /* Create a new HD image */
-    sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM",
-            AppSettings.HardDiskImage, AppSettings.ImageSize);
+    if (AppSettings.VMType == TYPE_KVM)
+    {
+        sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM",
+                AppSettings.HardDiskImage, AppSettings.ImageSize);
+    }
+    else if (AppSettings.VMType == TYPE_VMWARE)
+    {
+        sprintf(qemu_img_cmdline, "qemu-img create -f vmdk %s %dM",
+                AppSettings.HardDiskImage, AppSettings.ImageSize);
+    }
+
     FILE* p = popen(qemu_img_cmdline, "r");
     char buf[100];
     while(feof(p)==0)

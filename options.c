@@ -49,6 +49,15 @@ bool LoadSettings(const char* XmlConfig)
     if (obj)
         xmlXPathFreeObject(obj);
 
+    obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@type)",ctxt);
+    if ((obj != NULL) && (obj->type == XPATH_STRING))
+    {
+        if (strcasecmp(obj->stringval, "vmware") == 0)
+            AppSettings.VMType = TYPE_VMWARE;
+    }
+    if (obj)
+        xmlXPathFreeObject(obj);
+
     obj = xmlXPathEval(BAD_CAST"number(/settings/general/timeout/@ms)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_NUMBER))
     {
