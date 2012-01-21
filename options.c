@@ -56,9 +56,59 @@ bool LoadSettings(const char* XmlConfig)
             AppSettings.VMType = TYPE_VMWARE_PLAYER;
         else if (strcasecmp(obj->stringval, "vmwaregsx") == 0)
             AppSettings.VMType = TYPE_VMWARE_GSX;
+        else if (strcasecmp(obj->stringval, "vmwareesx") == 0)
+            AppSettings.VMType = TYPE_VMWARE_ESX;
     }
     if (obj)
         xmlXPathFreeObject(obj);
+
+    /* Get ids & domain */
+    if (AppSettings.VMType == TYPE_VMWARE_GSX ||
+        AppSettings.VMType == TYPE_VMWARE_ESX)
+    {
+        obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@domain)",ctxt);
+        if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
+        {
+            AppSettings.Domain = malloc(strlen(obj->stringval) + 1);
+            if (AppSettings.Domain)
+            {
+                strcpy(AppSettings.Domain, obj->stringval);
+            }
+        }
+
+        if (obj)
+            xmlXPathFreeObject(obj);
+
+        obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@username)",ctxt);
+        if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
+        {
+            AppSettings.Username = malloc(strlen(obj->stringval) + 1);
+            if (AppSettings.Username)
+            {
+                strcpy(AppSettings.Username, obj->stringval);
+            }
+        }
+
+        if (obj)
+            xmlXPathFreeObject(obj);
+
+        /* Get password only if there is an user name */
+        if (AppSettings.Username)
+        {
+            obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@password)",ctxt);
+            if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
+            {
+                AppSettings.Password = malloc(strlen(obj->stringval) + 1);
+                if (AppSettings.Password)
+                {
+                    strcpy(AppSettings.Password, obj->stringval);
+                }
+            }
+
+            if (obj)
+                xmlXPathFreeObject(obj);
+        }
+    }
 
     obj = xmlXPathEval(BAD_CAST"number(/settings/general/timeout/@ms)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_NUMBER))

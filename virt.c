@@ -13,6 +13,10 @@ const char* OutputPath;
 Settings AppSettings;
 ModuleListEntry* ModuleList;
 
+static int AuthCreds[] = {
+    VIR_CRED_PASSPHRASE,
+};
+
 bool GetConsole(virDomainPtr vDomPtr, char* console)
 {
     xmlDocPtr xml = NULL;
@@ -153,6 +157,24 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
     return vDomPtr;
 }
 
+int AuthToVMware(virConnectCredentialPtr cred, unsigned int ncred, void *cbdata)
+{
+    int i;
+
+    for (i = 0; i < ncred; i++)
+    {
+        if (cred[i].type == VIR_CRED_PASSPHRASE)
+        {
+            cred[i].result = strdup(AppSettings.Password);
+            if (cred[i].result == NULL)
+                return -1;
+            cred[i].resultlen = strlen(cred[i].result);
+        }
+    }
+
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     virConnectPtr vConn = NULL;
@@ -165,6 +187,8 @@ int main(int argc, char **argv)
     char console[50];
     unsigned int Retries;
     unsigned int Stage;
+    char libvirt_cmdline[300];
+    virConnectAuth vAuth;
 
     /* Get the output path to the built ReactOS files */
     OutputPath = getenv("ROS_OUTPUT");
@@ -195,7 +219,34 @@ int main(int argc, char **argv)
             break;
 
         case TYPE_VMWARE_GSX:
-            vConn = virConnectOpenAuth("gsx://localhost", virConnectAuthPtrDefault, 0);
+        case TYPE_VMWARE_ESX:
+            if (AppSettings.VMType == TYPE_VMWARE_GSX)
+                strcpy(libvirt_cmdline, "gsx://");
+            else
+                strcpy(libvirt_cmdline, "esx://");
+
+            if (AppSettings.Username)
+            {
+                strcat(libvirt_cmdline, AppSettings.Username);
+                strcat(libvirt_cmdline, "@");
+            }
+
+            if (AppSettings.Domain)
+                strcat(libvirt_cmdline, AppSettings.Domain);
+            else
+                strcat(libvirt_cmdline, "localhost");
+
+            if (AppSettings.Password)
+            {
+                vAuth.credtype = AuthCreds;
+                vAuth.ncredtype = sizeof(AuthCreds)/sizeof(int);
+                vAuth.cb = AuthToVMware;
+                vAuth.cbdata = NULL;
+            }
+            else
+                vAuth = *virConnectAuthPtrDefault;
+
+            vConn = virConnectOpenAuth("gsx://localhost", &vAuth, 0);
             break;
     }
 
@@ -292,6 +343,15 @@ cleanup:
 
     if (vConn)
         virConnectClose(vConn);
+
+    if (AppSettings.Domain)
+        free(AppSettings.Domain);
+
+    if (AppSettings.Username)
+        free(AppSettings.Username);
+
+    if (AppSettings.Password)
+        free(AppSettings.Password);
 
     switch (Ret)
     {

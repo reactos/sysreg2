@@ -34,6 +34,7 @@
 #define TYPE_KVM                    0
 #define TYPE_VMWARE_PLAYER          1
 #define TYPE_VMWARE_GSX             2
+#define TYPE_VMWARE_ESX             3
 
 typedef struct _stage
 {
@@ -53,6 +54,9 @@ typedef struct _Settings
     unsigned int MaxCacheHits;
     unsigned int MaxRetries;
     unsigned int VMType;
+    char* Username;
+    char* Password;
+    char* Domain;
 }
 Settings;
 
