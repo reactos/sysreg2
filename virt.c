@@ -246,7 +246,7 @@ int main(int argc, char **argv)
             else
                 vAuth = *virConnectAuthPtrDefault;
 
-            vConn = virConnectOpenAuth("gsx://localhost", &vAuth, 0);
+            vConn = virConnectOpenAuth(libvirt_cmdline, &vAuth, 0);
             break;
     }
 
