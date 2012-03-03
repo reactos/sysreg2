@@ -100,7 +100,6 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
     xmlDocPtr xml = NULL;
     xmlXPathObjectPtr obj = NULL;
     xmlXPathContextPtr ctxt = NULL;
-    char* XmlDoc;
     char* buffer;
     const char* name;
     char* domname;
