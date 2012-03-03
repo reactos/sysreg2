@@ -254,7 +254,7 @@ int main(int argc, char **argv)
     {
         /* SysregPrintf("Error: Virtual Machine is already running.\n");
         goto cleanup; */
-        system("virsh destroy ReactOS");
+        system("virsh destroy ReactOS-CMake");
         usleep(1000);
     }
 
