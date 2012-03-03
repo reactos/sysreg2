@@ -139,6 +139,9 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             /* Check whether the message is of zero length */
             if (bp == Buffer)
             {
+                if (got != 0)
+                    continue;
+
                 /* This can happen when the machine shut down (like after 1st or 2nd stage)
                    or after we got a Kdbg backtrace. */
                 Ret = EXIT_CONTINUE;
