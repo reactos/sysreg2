@@ -27,7 +27,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     *CacheBuffer = 0;
 
     /* ttyfd is the file descriptor of the virtual COM port */
-    if ((ttyfd = open(tty, O_NOCTTY | O_RDWR)) < 0)
+    if ((ttyfd = open(tty, O_NOCTTY | O_RDWR | O_NONBLOCK)) < 0)
     {
         SysregPrintf("error opening tty\n");
         return Ret;
@@ -96,6 +96,14 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
                 if (got < 0)
                 {
+                    if (errno == EINTR) {
+                        /* Give it another chance */
+                        continue;
+                    } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                        /* There's nothing more to read */
+                        break;
+                    }
+
                     SysregPrintf("read failed with error %d\n", errno);
                     goto cleanup;
                 }
