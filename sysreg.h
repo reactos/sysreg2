@@ -70,7 +70,7 @@ ModuleListEntry;
 
 /* utils.c */
 char* ReadFile (const char* filename);
-ssize_t safewrite(int fd, const void *buf, size_t count);
+ssize_t safewrite(int fd, const void *buf, size_t count, int timeout);
 void SysregPrintf(const char* format, ...);
 
 /* options.c */

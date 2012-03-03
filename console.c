@@ -170,7 +170,13 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 if (KdbgHit == 1)
                 {
                     /* We hit Kdbg for the first time, get a backtrace for the log */
-                    safewrite(ttyfd, "bt\r", 3);
+                    if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK) {
+                        /* timeout */
+                        SysregPrintf("timeout\n");
+                        Ret = EXIT_CONTINUE;
+                        goto cleanup;
+                    }
+
                     continue;
                 }
                 else
@@ -184,7 +190,12 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             else if (strstr(Buffer, "--- Press q"))
             {
                 /* Send Return to get more data from Kdbg */
-                safewrite(ttyfd, "\r", 1);
+                if (safewrite(ttyfd, "\r", 1, timeout) < 0 && errno == EWOULDBLOCK) {
+                    /* timeout */
+                    SysregPrintf("timeout\n");
+                    Ret = EXIT_CONTINUE;
+                    goto cleanup;
+                }
                 continue;
             }
             else if (strstr(Buffer, "SYSREG_ROSAUTOTEST_FAILURE"))

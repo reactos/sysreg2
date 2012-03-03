@@ -8,10 +8,26 @@
 
 #include "sysreg.h"
 
-ssize_t safewrite(int fd, const void *buf, size_t count)
+ssize_t safewrite(int fd, const void *buf, size_t count, int timeout)
 {
+    struct pollfd fds[] = {
+        { fd, POLLOUT, 0 },
+    };
+    int got;
     size_t nwritten = 0;
     while (count > 0) {
+        /* Ensure we can write to the fd */
+        got = poll(fds, (sizeof(fds) / sizeof(struct pollfd)), timeout);
+        /* Timeout, signal it to caller */
+        if (got == 0) {
+            errno == EWOULDBLOCK;
+            return -1;
+        }
+        /* Error, return, errno is set */
+        else if (got < 0) {
+            return -1;
+        }
+
         ssize_t r = write(fd, buf, count);
 
         if (r < 0 && errno == EINTR)
