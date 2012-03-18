@@ -15,6 +15,9 @@
 
 		<!-- Maximum number of retries allowed before we cancel the entire testing process. -->
 		<maxretries value="35" />
+
+		<!-- Maximum number of cont that sysreg will issue after a bt during the whole life of an instance -->
+		<maxconts value="5" />
 	</general>
 	<firststage bootdevice="cdrom">
 	</firststage>

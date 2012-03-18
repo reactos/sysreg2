@@ -22,6 +22,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     unsigned int CacheHits = 0;
     unsigned int i;
     unsigned int KdbgHit = 0;
+    unsigned int Cont = 0;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -189,10 +190,30 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 }
                 else
                 {
-                    /* We hit it yet another time, give up here */
-                    printf("\n");
-                    Ret = EXIT_CONTINUE;
-                    goto cleanup;
+                    ++Cont;
+
+                    if (Cont <= AppSettings.MaxConts)
+                    {
+                        KdbgHit = 0;
+
+                        /* Try to continue */
+                        if (safewrite(ttyfd, "cont\r", 5, timeout) < 0 && errno == EWOULDBLOCK) {
+                            /* timeout */
+                            SysregPrintf("timeout\n");
+                            Ret = EXIT_CONTINUE;
+                            goto cleanup;
+                        }
+
+                        continue;
+                    }
+                    else
+                    {
+                        /* We tried to continue too many times - abort */
+                        printf("\n");
+                        Ret = EXIT_CONTINUE;
+                        goto cleanup;
+                    }
+
                 }
             }
             else if (strstr(Buffer, "--- Press q"))
