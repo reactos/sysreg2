@@ -14,7 +14,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     char Buffer[BUFFER_SIZE];
     char CacheBuffer[BUFFER_SIZE];
     char Raddr2LineBuffer[BUFFER_SIZE];
-    char* bp;
+    char* bp = Buffer;
     int got;
     int Ret = EXIT_DONT_CONTINUE;
     int ttyfd;
@@ -88,7 +88,9 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             if (!(fds[i].revents & POLLIN))
                 continue;
 
-            bp = Buffer;
+            /* Reset buffer only when we read complete line */
+            if (bp != Buffer && *bp == '\n')
+                bp = Buffer;
 
             /* Read one line or a maximum of 511 bytes into a buffer (leave space for the null character) */
             while (bp - Buffer < (BUFFER_SIZE - 1))
@@ -145,6 +147,10 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 Ret = EXIT_CONTINUE;
                 goto cleanup;
             }
+
+            /* Only process complete lines */
+            if (*bp != '\n')
+                continue;
 
             /* Detect whether the same line appears over and over again.
                If that is the case, cancel this test after a specified number of repetitions. */
