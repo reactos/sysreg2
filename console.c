@@ -89,7 +89,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 continue;
 
             /* Reset buffer only when we read complete line */
-            if (bp != Buffer && *bp == '\n')
+            if (bp != Buffer && (*bp == '\n' || (bp - Buffer >= (BUFFER_SIZE - 1))))
                 bp = Buffer;
 
             /* Read one line or a maximum of 511 bytes into a buffer (leave space for the null character) */
@@ -149,7 +149,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             }
 
             /* Only process complete lines */
-            if (*bp != '\n')
+            if (*bp != '\n' && (bp - Buffer < (BUFFER_SIZE - 1)))
                 continue;
 
             /* Detect whether the same line appears over and over again.
