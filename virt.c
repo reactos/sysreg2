@@ -305,7 +305,11 @@ int main(int argc, char **argv)
             SysregPrintf("Running stage %d...\n", Stage + 1);
             SysregPrintf("Domain %s started.\n", virDomainGetName(vDom));
 
-            GetConsole(vDom, console);
+            if(!GetConsole(vDom, console))
+            {
+                SysregPrintf("GetConsole failed!\n");
+                goto cleanup;
+            }
             Ret = ProcessDebugData(console, AppSettings.Timeout, Stage);
 
             /* Kill the VM */
