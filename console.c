@@ -128,8 +128,16 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     bp[1] = 0;
 
                     /* Break on newlines or in case of KDBG messages (which aren't terminated by newlines) */
-                    if(*bp == '\n' || strstr(Buffer, "kdb:>") || strstr(Buffer, "--- Press q"))
+                    if(*bp == '\n')
                         break;
+
+                    if (strstr(Buffer, "kdb:>") || strstr(Buffer, "--- Press q to abort, any other key to continue ---")) {
+                        /* Set EOL */
+                        ++bp;
+                        *bp = '\n';
+                        bp[1] = 0;
+                        break;
+                    }
 
                     ++bp;
                 }
