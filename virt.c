@@ -43,7 +43,11 @@ bool GetConsole(virDomainPtr vDomPtr, char* console)
         return false;
     }
 
-    obj = xmlXPathEval(BAD_CAST "string(/domain/devices/console/@tty)", ctxt);
+    if (AppSettings.VMType == TYPE_KVM)
+        obj = xmlXPathEval(BAD_CAST "string(/domain/devices/console/@tty)", ctxt);
+    else
+        obj = xmlXPathEval(BAD_CAST "string(/domain/devices/serial/source/@path)", ctxt);
+
     if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                          (obj->stringval != NULL) && (obj->stringval[0] != 0)))
     {
