@@ -24,6 +24,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     unsigned int i;
     unsigned int KdbgHit = 0;
     unsigned int Cont = 0;
+    bool AlreadyBooted = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -180,6 +181,19 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             /* Only process complete lines */
             if (*bp != '\n' && (bp - Buffer < (BUFFER_SIZE - 1)))
                 continue;
+
+            /* Hackish way to detect reboot under VMware... */
+            if (AppSettings.VMType == TYPE_VMWARE_PLAYER &&
+                strstr(Buffer, "-----------------------------------------------------"))
+            {
+                if (AlreadyBooted)
+                {
+                    Ret = EXIT_CONTINUE;
+                    goto cleanup;
+                }
+                else
+                    AlreadyBooted = true;
+            }
 
             /* Detect whether the same line appears over and over again.
                If that is the case, cancel this test after a specified number of repetitions. */

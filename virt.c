@@ -107,6 +107,38 @@ bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name, bool destroy
     return false;
 }
 
+bool StartListeningSocket(void)
+{
+    struct sockaddr_un addr;
+
+    if ((AppSettings.Specific.VMwarePlayer.Socket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    {
+        SysregPrintf("Failed creating socket\n");
+        return false;
+    }
+
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, AppSettings.Specific.VMwarePlayer.Path, sizeof(addr.sun_path) - 1);
+
+    /* Safety measure */
+    unlink(AppSettings.Specific.VMwarePlayer.Path);
+
+    if (bind(AppSettings.Specific.VMwarePlayer.Socket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    {
+        SysregPrintf("Failed binding\n");
+        return false;
+    }
+
+    if (listen(AppSettings.Specific.VMwarePlayer.Socket, 5) < 0)
+    {
+        SysregPrintf("Failed listening\n");
+        return false;
+    }
+
+    return true;
+}
+
 virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, const char* BootDevice)
 {
     xmlDocPtr xml = NULL;
@@ -144,6 +176,11 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
     xmlDocDumpMemory(xml, (xmlChar**) &buffer, &len);
     xmlFreeDoc(xml);
     xmlXPathFreeContext(ctxt);
+
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER && !StartListeningSocket())
+    {
+        return NULL;
+    }
 
     virDomainPtr vDomPtr = virDomainDefineXML(vConn, buffer);
     xmlFree((xmlChar*)buffer);
@@ -303,37 +340,6 @@ int main(int argc, char **argv)
     }
     pclose(p);
 
-    /* If VMware, also create a socket and listen on it */
-    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
-    {
-        struct sockaddr_un addr;
-
-        if ((AppSettings.Specific.VMwarePlayer.Socket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-        {
-            SysregPrintf("Failed creating socket\n");
-            return -errno;
-        }
-
-        memset(&addr, 0, sizeof(addr));
-        addr.sun_family = AF_UNIX;
-        strncpy(addr.sun_path, AppSettings.Specific.VMwarePlayer.Path, sizeof(addr.sun_path) - 1);
-
-        /* Safety measure */
-        unlink(AppSettings.Specific.VMwarePlayer.Path);
-
-        if (bind(AppSettings.Specific.VMwarePlayer.Socket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
-        {
-            SysregPrintf("Failed binding\n");
-            return -errno;
-        }
-
-        if (listen(AppSettings.Specific.VMwarePlayer.Socket, 5) < 0)
-        {
-            SysregPrintf("Failed listening\n");
-            return -errno;
-        }
-    }
-
     for(Stage = 0; Stage < NUM_STAGES; Stage++)
     {
         for(Retries = 0; Retries < AppSettings.MaxRetries; Retries++)
@@ -366,6 +372,12 @@ int main(int argc, char **argv)
 
             virDomainUndefine(vDom);
             virDomainFree(vDom);
+
+            if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+            {
+                close(AppSettings.Specific.VMwarePlayer.Socket);
+                unlink(AppSettings.Specific.VMwarePlayer.Path);
+            }
 
             usleep(1000);
 
@@ -406,11 +418,6 @@ cleanup:
 
         if (AppSettings.Specific.VMwareESX.Password)
             free(AppSettings.Specific.VMwareESX.Password);
-    }
-    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
-    {
-        close(AppSettings.Specific.VMwarePlayer.Socket);
-        unlink(AppSettings.Specific.VMwarePlayer.Path);
     }
 
     switch (Ret)
