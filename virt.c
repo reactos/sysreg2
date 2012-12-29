@@ -63,7 +63,7 @@ bool GetConsole(virDomainPtr vDomPtr, char* console)
     return RetVal;
 }
 
-bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name)
+bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name, bool destroy)
 {
     int* ids = NULL;
     int numids;
@@ -89,9 +89,16 @@ bool IsVirtualMachineRunning(virConnectPtr vConn, const char* name)
             domname = virDomainGetName(vDomPtr);
             if (strcasecmp(name, domname) == 0)
             {
+                bool Ret = true;
+                /* If asked to destroy the machine, try to do so */
+                if (destroy)
+                {
+                    Ret = (virDomainDestroy(vDomPtr) == -1);
+                    if (!Ret) virDomainUndefine(vDomPtr);
+                }
                 virDomainFree(vDomPtr);
                 free(ids);
-                return true;
+                return Ret;
             }
             virDomainFree(vDomPtr);
         }
@@ -254,10 +261,10 @@ int main(int argc, char **argv)
             break;
     }
 
-    if (IsVirtualMachineRunning(vConn, AppSettings.Name))
+    if (IsVirtualMachineRunning(vConn, AppSettings.Name, true))
     {
-        /* SysregPrintf("Error: Virtual Machine is already running.\n");
-        goto cleanup; */
+        SysregPrintf("Error: Virtual Machine is still running.\n");
+        /* goto cleanup; */
         /* FIXME: In case we don't use KVM, it is mandatory to provide
          * a -c connection info to able to kill the VM!
          */
