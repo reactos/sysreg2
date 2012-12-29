@@ -121,13 +121,13 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
                 if (got < 0)
                 {
-                    if (errno == EINTR) {
-                        /* Give it another chance */
+                    /* Give it another chance */
+                    if (errno == EINTR)
                         continue;
-                    } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                        /* There's nothing more to read */
+
+                    /* There's nothing more to read */
+                    else if (errno == EAGAIN || errno == EWOULDBLOCK)
                         break;
-                    }
 
                     SysregPrintf("read failed with error %d\n", errno);
                     goto cleanup;
@@ -153,7 +153,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     if(*bp == '\n')
                         break;
 
-                    if (strstr(Buffer, "kdb:>") || strstr(Buffer, "--- Press q to abort, any other key to continue ---")) {
+                    if (strstr(Buffer, "kdb:>") || strstr(Buffer, "--- Press q to abort, any other key to continue ---"))
+                    {
                         /* Set EOL */
                         ++bp;
                         *bp = '\n';
@@ -228,7 +229,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 if (KdbgHit == 1)
                 {
                     /* We hit Kdbg for the first time, get a backtrace for the log */
-                    if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK) {
+                    if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK)
+                    {
                         /* timeout */
                         SysregPrintf("timeout\n");
                         Ret = EXIT_CONTINUE;
@@ -246,7 +248,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                         KdbgHit = 0;
 
                         /* Try to continue */
-                        if (safewrite(ttyfd, "cont\r", 5, timeout) < 0 && errno == EWOULDBLOCK) {
+                        if (safewrite(ttyfd, "cont\r", 5, timeout) < 0 && errno == EWOULDBLOCK)
+                        {
                             /* timeout */
                             SysregPrintf("timeout\n");
                             Ret = EXIT_CONTINUE;
@@ -268,7 +271,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             else if (strstr(Buffer, "--- Press q"))
             {
                 /* Send Return to get more data from Kdbg */
-                if (safewrite(ttyfd, "\r", 1, timeout) < 0 && errno == EWOULDBLOCK) {
+                if (safewrite(ttyfd, "\r", 1, timeout) < 0 && errno == EWOULDBLOCK)
+                {
                     /* timeout */
                     SysregPrintf("timeout\n");
                     Ret = EXIT_CONTINUE;
