@@ -28,8 +28,6 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
 
-    SysregPrintf("Will open: .%s.\n", tty);
-
     if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
     {
         /* Wait for VMware connection */
