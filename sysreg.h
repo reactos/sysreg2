@@ -4,6 +4,7 @@
  * PURPOSE:     Shared header
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include <dirent.h>
@@ -25,6 +26,8 @@
 #include <sys/stat.h>
 #include <sys/sysinfo.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #define EXIT_CHECKPOINT_REACHED     0
 #define EXIT_CONTINUE               1
@@ -55,6 +58,13 @@ typedef struct _Settings
     unsigned int MaxRetries;
     unsigned int MaxConts;
     unsigned int VMType;
+    union
+    {
+        struct {
+            char Path[255];
+            int Socket;
+        } VMwarePlayer;
+    } Specific;
     char* Username;
     char* Password;
     char* Domain;

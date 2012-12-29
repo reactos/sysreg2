@@ -4,6 +4,7 @@
  * PURPOSE:     Processing the incoming debugging data
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -27,11 +28,33 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
 
-    /* ttyfd is the file descriptor of the virtual COM port */
-    if ((ttyfd = open(tty, O_NOCTTY | O_RDWR | O_NONBLOCK)) < 0)
+    SysregPrintf("Will open: .%s.\n", tty);
+
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
     {
-        SysregPrintf("error opening tty\n");
-        return Ret;
+        /* Wait for VMware connection */
+        if ((ttyfd = accept(AppSettings.Specific.VMwarePlayer.Socket, NULL, NULL)) < 0)
+        {
+            SysregPrintf("error getting socket\n");
+            return Ret;
+        }
+
+        /* Set non blocking */
+        if (fcntl(ttyfd, F_SETFL, O_NONBLOCK) < 0)
+        {
+            SysregPrintf("error setting flag\n");
+            close(ttyfd);
+            return Ret;
+        }
+    }
+    else
+    {
+        /* ttyfd is the file descriptor of the virtual COM port */
+        if ((ttyfd = open(tty, O_NOCTTY | O_RDWR | O_NONBLOCK)) < 0)
+        {
+            SysregPrintf("error opening tty\n");
+            return Ret;
+        }
     }
 
     /* We also monitor STDIN_FILENO, so a user can cancel the process with ESC */

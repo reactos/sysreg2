@@ -4,6 +4,7 @@
  * PURPOSE:     Main entry point and controlling the virtual machine
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -292,6 +293,37 @@ int main(int argc, char **argv)
     }
     pclose(p);
 
+    /* If VMware, also create a socket and listen on it */
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    {
+        struct sockaddr_un addr;
+
+        if ((AppSettings.Specific.VMwarePlayer.Socket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+        {
+            SysregPrintf("Failed creating socket\n");
+            return -errno;
+        }
+
+        memset(&addr, 0, sizeof(addr));
+        addr.sun_family = AF_UNIX;
+        strncpy(addr.sun_path, AppSettings.Specific.VMwarePlayer.Path, sizeof(addr.sun_path) - 1);
+
+        /* Safety measure */
+        unlink(AppSettings.Specific.VMwarePlayer.Path);
+
+        if (bind(AppSettings.Specific.VMwarePlayer.Socket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+        {
+            SysregPrintf("Failed binding\n");
+            return -errno;
+        }
+
+        if (listen(AppSettings.Specific.VMwarePlayer.Socket, 5) < 0)
+        {
+            SysregPrintf("Failed listening\n");
+            return -errno;
+        }
+    }
+
     for(Stage = 0; Stage < NUM_STAGES; Stage++)
     {
         for(Retries = 0; Retries < AppSettings.MaxRetries; Retries++)
@@ -309,7 +341,7 @@ int main(int argc, char **argv)
             SysregPrintf("Running stage %d...\n", Stage + 1);
             SysregPrintf("Domain %s started.\n", virDomainGetName(vDom));
 
-            if(!GetConsole(vDom, console))
+            if (AppSettings.VMType != TYPE_VMWARE_PLAYER && !GetConsole(vDom, console))
             {
                 SysregPrintf("GetConsole failed!\n");
                 goto cleanup;
@@ -361,6 +393,12 @@ cleanup:
 
     if (AppSettings.Password)
         free(AppSettings.Password);
+
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    {
+        close(AppSettings.Specific.VMwarePlayer.Socket);
+        unlink(AppSettings.Specific.VMwarePlayer.Path);
+    }
 
     switch (Ret)
     {

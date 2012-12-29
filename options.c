@@ -4,6 +4,7 @@
  * PURPOSE:     Loading the utility settings
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -108,6 +109,17 @@ bool LoadSettings(const char* XmlConfig)
             if (obj)
                 xmlXPathFreeObject(obj);
         }
+    }
+    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    {
+        obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@serial)",ctxt);
+        if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
+        {
+            strcpy(AppSettings.Specific.VMwarePlayer.Path, obj->stringval);
+        }
+
+        if (obj)
+            xmlXPathFreeObject(obj);
     }
 
     obj = xmlXPathEval(BAD_CAST"number(/settings/general/timeout/@ms)",ctxt);
