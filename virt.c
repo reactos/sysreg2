@@ -169,7 +169,7 @@ int AuthToVMware(virConnectCredentialPtr cred, unsigned int ncred, void *cbdata)
     {
         if (cred[i].type == VIR_CRED_PASSPHRASE)
         {
-            cred[i].result = strdup(AppSettings.Password);
+            cred[i].result = strdup(AppSettings.Specific.VMwareESX.Password);
             if (cred[i].result == NULL)
                 return -1;
             cred[i].resultlen = strlen(cred[i].result);
@@ -229,18 +229,18 @@ int main(int argc, char **argv)
             else
                 strcpy(libvirt_cmdline, "esx://");
 
-            if (AppSettings.Username)
+            if (AppSettings.Specific.VMwareESX.Username)
             {
-                strcat(libvirt_cmdline, AppSettings.Username);
+                strcat(libvirt_cmdline, AppSettings.Specific.VMwareESX.Username);
                 strcat(libvirt_cmdline, "@");
             }
 
-            if (AppSettings.Domain)
-                strcat(libvirt_cmdline, AppSettings.Domain);
+            if (AppSettings.Specific.VMwareESX.Domain)
+                strcat(libvirt_cmdline, AppSettings.Specific.VMwareESX.Domain);
             else
                 strcat(libvirt_cmdline, "localhost");
 
-            if (AppSettings.Password)
+            if (AppSettings.Specific.VMwareESX.Password)
             {
                 vAuth.credtype = AuthCreds;
                 vAuth.ncredtype = sizeof(AuthCreds)/sizeof(int);
@@ -385,16 +385,19 @@ cleanup:
     if (vConn)
         virConnectClose(vConn);
 
-    if (AppSettings.Domain)
-        free(AppSettings.Domain);
+    if (AppSettings.VMType == TYPE_VMWARE_GSX ||
+        AppSettings.VMType == TYPE_VMWARE_ESX)
+    {
+        if (AppSettings.Specific.VMwareESX.Domain)
+            free(AppSettings.Specific.VMwareESX.Domain);
 
-    if (AppSettings.Username)
-        free(AppSettings.Username);
+        if (AppSettings.Specific.VMwareESX.Username)
+            free(AppSettings.Specific.VMwareESX.Username);
 
-    if (AppSettings.Password)
-        free(AppSettings.Password);
-
-    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+        if (AppSettings.Specific.VMwareESX.Password)
+            free(AppSettings.Specific.VMwareESX.Password);
+    }
+    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
     {
         close(AppSettings.Specific.VMwarePlayer.Socket);
         unlink(AppSettings.Specific.VMwarePlayer.Path);

@@ -60,14 +60,18 @@ typedef struct _Settings
     unsigned int VMType;
     union
     {
-        struct {
+        struct
+        {
             char Path[255];
             int Socket;
         } VMwarePlayer;
+        struct
+        {
+            char* Username;
+            char* Password;
+            char* Domain;
+        } VMwareESX;
     } Specific;
-    char* Username;
-    char* Password;
-    char* Domain;
 }
 Settings;
 

@@ -70,10 +70,10 @@ bool LoadSettings(const char* XmlConfig)
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@domain)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
         {
-            AppSettings.Domain = malloc(strlen(obj->stringval) + 1);
-            if (AppSettings.Domain)
+            AppSettings.Specific.VMwareESX.Domain = malloc(strlen(obj->stringval) + 1);
+            if (AppSettings.Specific.VMwareESX.Domain)
             {
-                strcpy(AppSettings.Domain, obj->stringval);
+                strcpy(AppSettings.Specific.VMwareESX.Domain, obj->stringval);
             }
         }
 
@@ -83,10 +83,10 @@ bool LoadSettings(const char* XmlConfig)
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@username)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
         {
-            AppSettings.Username = malloc(strlen(obj->stringval) + 1);
-            if (AppSettings.Username)
+            AppSettings.Specific.VMwareESX.Username = malloc(strlen(obj->stringval) + 1);
+            if (AppSettings.Specific.VMwareESX.Username)
             {
-                strcpy(AppSettings.Username, obj->stringval);
+                strcpy(AppSettings.Specific.VMwareESX.Username, obj->stringval);
             }
         }
 
@@ -94,15 +94,15 @@ bool LoadSettings(const char* XmlConfig)
             xmlXPathFreeObject(obj);
 
         /* Get password only if there is an user name */
-        if (AppSettings.Username)
+        if (AppSettings.Specific.VMwareESX.Username)
         {
             obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@password)",ctxt);
             if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
             {
-                AppSettings.Password = malloc(strlen(obj->stringval) + 1);
-                if (AppSettings.Password)
+                AppSettings.Specific.VMwareESX.Password = malloc(strlen(obj->stringval) + 1);
+                if (AppSettings.Specific.VMwareESX.Password)
                 {
-                    strcpy(AppSettings.Password, obj->stringval);
+                    strcpy(AppSettings.Specific.VMwareESX.Password, obj->stringval);
                 }
             }
 
