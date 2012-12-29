@@ -258,6 +258,9 @@ int main(int argc, char **argv)
     {
         /* SysregPrintf("Error: Virtual Machine is already running.\n");
         goto cleanup; */
+        /* FIXME: In case we don't use KVM, it is mandatory to provide
+         * a -c connection info to able to kill the VM!
+         */
         strcpy(libvirt_cmdline, "virsh destroy ");
         strcat(libvirt_cmdline, AppSettings.Name);
         system(libvirt_cmdline);
