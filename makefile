@@ -12,7 +12,7 @@ INC := -I/usr/include/libvirt/ -I/usr/include/libxml2/
 
 SRCS := virt.c utils.c console.c options.c raddr2line.c revision.c
 
-OBJS := $(SRCS:.c=.o) 
+OBJS := $(SRCS:.c=.o)
 
 $(TARGET): $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $(OBJS) $(LIBS)
