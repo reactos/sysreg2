@@ -39,6 +39,8 @@
 #define TYPE_VMWARE_GSX             2
 #define TYPE_VMWARE_ESX             3
 
+extern const int SVNRev;
+
 typedef struct _stage
 {
     char BootDevice[8];

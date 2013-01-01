@@ -250,6 +250,8 @@ int main(int argc, char **argv)
     else
         strcpy(config, "sysreg.xml");
 
+    SysregPrintf("sysreg2 r%d starting\n", SVNRev);
+
     if (!LoadSettings(config))
     {
         SysregPrintf("Cannot load configuration file\n");
