@@ -20,7 +20,7 @@ ssize_t safewrite(int fd, const void *buf, size_t count, int timeout)
         got = poll(fds, (sizeof(fds) / sizeof(struct pollfd)), timeout);
         /* Timeout, signal it to caller */
         if (got == 0) {
-            errno == EWOULDBLOCK;
+            errno = EWOULDBLOCK;
             return -1;
         }
         /* Error, return, errno is set */
