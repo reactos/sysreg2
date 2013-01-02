@@ -53,11 +53,11 @@ bool LoadSettings(const char* XmlConfig)
     obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@type)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_STRING))
     {
-        if (strcasecmp(obj->stringval, "vmwareplayer") == 0)
+        if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareplayer") == 0)
             AppSettings.VMType = TYPE_VMWARE_PLAYER;
-        else if (strcasecmp(obj->stringval, "vmwaregsx") == 0)
+        else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwaregsx") == 0)
             AppSettings.VMType = TYPE_VMWARE_GSX;
-        else if (strcasecmp(obj->stringval, "vmwareesx") == 0)
+        else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareesx") == 0)
             AppSettings.VMType = TYPE_VMWARE_ESX;
     }
     if (obj)
@@ -70,7 +70,7 @@ bool LoadSettings(const char* XmlConfig)
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@domain)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
         {
-            AppSettings.Specific.VMwareESX.Domain = malloc(strlen(obj->stringval) + 1);
+            AppSettings.Specific.VMwareESX.Domain = malloc(xmlStrlen(obj->stringval) + 1);
             if (AppSettings.Specific.VMwareESX.Domain)
             {
                 strcpy(AppSettings.Specific.VMwareESX.Domain, obj->stringval);
@@ -83,7 +83,7 @@ bool LoadSettings(const char* XmlConfig)
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@username)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
         {
-            AppSettings.Specific.VMwareESX.Username = malloc(strlen(obj->stringval) + 1);
+            AppSettings.Specific.VMwareESX.Username = malloc(xmlStrlen(obj->stringval) + 1);
             if (AppSettings.Specific.VMwareESX.Username)
             {
                 strcpy(AppSettings.Specific.VMwareESX.Username, obj->stringval);
@@ -99,7 +99,7 @@ bool LoadSettings(const char* XmlConfig)
             obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@password)",ctxt);
             if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
             {
-                AppSettings.Specific.VMwareESX.Password = malloc(strlen(obj->stringval) + 1);
+                AppSettings.Specific.VMwareESX.Password = malloc(xmlStrlen(obj->stringval) + 1);
                 if (AppSettings.Specific.VMwareESX.Password)
                 {
                     strcpy(AppSettings.Specific.VMwareESX.Password, obj->stringval);
