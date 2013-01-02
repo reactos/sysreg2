@@ -36,7 +36,7 @@ bool LoadSettings(const char* XmlConfig)
     if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                     (obj->stringval != NULL) && (obj->stringval[0] != 0)))
     {
-        strncpy(AppSettings.Filename, obj->stringval, 254);
+        strncpy(AppSettings.Filename, (char *)obj->stringval, 254);
     }
     if (obj)
         xmlXPathFreeObject(obj);
@@ -45,7 +45,7 @@ bool LoadSettings(const char* XmlConfig)
     if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                      (obj->stringval != NULL) && (obj->stringval[0] != 0)))
     {
-        strncpy(AppSettings.Name, obj->stringval, 79);
+        strncpy(AppSettings.Name, (char *)obj->stringval, 79);
     }
     if (obj)
         xmlXPathFreeObject(obj);
@@ -73,7 +73,7 @@ bool LoadSettings(const char* XmlConfig)
             AppSettings.Specific.VMwareESX.Domain = malloc(xmlStrlen(obj->stringval) + 1);
             if (AppSettings.Specific.VMwareESX.Domain)
             {
-                strcpy(AppSettings.Specific.VMwareESX.Domain, obj->stringval);
+                strcpy(AppSettings.Specific.VMwareESX.Domain, (char *)obj->stringval);
             }
         }
 
@@ -86,7 +86,7 @@ bool LoadSettings(const char* XmlConfig)
             AppSettings.Specific.VMwareESX.Username = malloc(xmlStrlen(obj->stringval) + 1);
             if (AppSettings.Specific.VMwareESX.Username)
             {
-                strcpy(AppSettings.Specific.VMwareESX.Username, obj->stringval);
+                strcpy(AppSettings.Specific.VMwareESX.Username, (char *)obj->stringval);
             }
         }
 
@@ -102,7 +102,7 @@ bool LoadSettings(const char* XmlConfig)
                 AppSettings.Specific.VMwareESX.Password = malloc(xmlStrlen(obj->stringval) + 1);
                 if (AppSettings.Specific.VMwareESX.Password)
                 {
-                    strcpy(AppSettings.Specific.VMwareESX.Password, obj->stringval);
+                    strcpy(AppSettings.Specific.VMwareESX.Password, (char *)obj->stringval);
                 }
             }
 
@@ -115,7 +115,7 @@ bool LoadSettings(const char* XmlConfig)
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@serial)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
         {
-            strcpy(AppSettings.Specific.VMwarePlayer.Path, obj->stringval);
+            strcpy(AppSettings.Specific.VMwarePlayer.Path, (char *)obj->stringval);
         }
 
         if (obj)
@@ -176,7 +176,7 @@ bool LoadSettings(const char* XmlConfig)
         if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                 (obj->stringval != NULL) && (obj->stringval[0] != 0)))
         {
-            strncpy(AppSettings.Stage[Stage].BootDevice, obj->stringval, 7);
+            strncpy(AppSettings.Stage[Stage].BootDevice, (char *)obj->stringval, 7);
         }
         if (obj)
             xmlXPathFreeObject(obj);
@@ -187,7 +187,7 @@ bool LoadSettings(const char* XmlConfig)
         if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
             (obj->stringval != NULL) && (obj->stringval[0] != 0)))
         {
-            strncpy(AppSettings.Stage[Stage].Checkpoint, obj->stringval, 79);
+            strncpy(AppSettings.Stage[Stage].Checkpoint, (char *)obj->stringval, 79);
         }
         if (obj)
             xmlXPathFreeObject(obj);
@@ -209,7 +209,7 @@ bool LoadSettings(const char* XmlConfig)
     if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                      (obj->stringval != NULL) && (obj->stringval[0] != 0)))
     {
-        strncpy(AppSettings.HardDiskImage, obj->stringval, 254);
+        strncpy(AppSettings.HardDiskImage, (char *)obj->stringval, 254);
     }
     if (obj)
         xmlXPathFreeObject(obj);

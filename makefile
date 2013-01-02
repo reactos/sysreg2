@@ -5,7 +5,7 @@ TARGET := sysreg2
 all: $(TARGET)
 
 CC=gcc
-CFLAGS := -g -O0 -std=c99 -D_GNU_SOURCE
+CFLAGS := -g -O0 -std=c99 -D_GNU_SOURCE -Wall -Wextra
 LFLAGS := -L/usr/lib64
 LIBS := -lvirt -lxml2
 INC := -I/usr/include/libvirt/ -I/usr/include/libxml2/

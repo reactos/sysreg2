@@ -52,7 +52,7 @@ bool GetConsole(virDomainPtr vDomPtr, char* console)
     if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
                          (obj->stringval != NULL) && (obj->stringval[0] != 0)))
     {
-        strcpy(console, obj->stringval);
+        strcpy(console, (char *)obj->stringval);
         RetVal = true;
     }
     if (obj)
@@ -167,7 +167,7 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
     if ((obj != NULL) && (obj->type == XPATH_NODESET)
             && (obj->nodesetval != NULL) && (obj->nodesetval->nodeTab != NULL))
     {
-        xmlSetProp(obj->nodesetval->nodeTab[0], "dev", BootDevice);
+        xmlSetProp(obj->nodesetval->nodeTab[0], BAD_CAST"dev", BAD_CAST BootDevice);
     }
     if (obj)
         xmlXPathFreeObject(obj);
@@ -207,9 +207,9 @@ virDomainPtr LaunchVirtualMachine(virConnectPtr vConn, const char* XmlFileName, 
 
 int AuthToVMware(virConnectCredentialPtr cred, unsigned int ncred, void *cbdata)
 {
-    int i;
+    (void)cbdata;
 
-    for (i = 0; i < ncred; i++)
+    for (unsigned int i = 0; i < ncred; i++)
     {
         if (cred[i].type == VIR_CRED_PASSPHRASE)
         {
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
     }
 
     /* If the HD image already exists, delete it */
-    if (file = fopen(AppSettings.HardDiskImage, "r"))
+    if ((file = fopen(AppSettings.HardDiskImage, "r")))
     {
         fclose(file);
         remove(AppSettings.HardDiskImage);
