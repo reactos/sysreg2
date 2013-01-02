@@ -20,7 +20,7 @@ static void RecurseModuleDirectory(const char* Directory, ModuleListEntry** Last
     if(!dir)
         return;
 
-    while(dp = readdir(dir))
+    while ((dp = readdir(dir)))
     {
         if(*dp->d_name == '.')
             continue;
@@ -68,12 +68,15 @@ static void RecurseModuleDirectory(const char* Directory, ModuleListEntry** Last
 void InitializeModuleList()
 {
     ModuleListEntry* LastElement;
+    char TrunkOutput[256];
 
     ModuleList = (ModuleListEntry*)malloc(sizeof(ModuleListEntry));
     ModuleList->Next = NULL;
     LastElement = ModuleList;
 
-    RecurseModuleDirectory(OutputPath, &LastElement);
+    strcpy(TrunkOutput, OutputPath);
+    strcat(TrunkOutput, "/reactos/");
+    RecurseModuleDirectory(TrunkOutput, &LastElement);
 }
 
 void CleanModuleList()
@@ -152,10 +155,10 @@ bool ResolveAddressFromFile(char* Buffer, size_t BufferSize, const char* Data)
     Address[AddressLength] = 0;
 
     /* Try to find the path to this module */
-    if(ModuleEntry = FindModule(Module))
+    if ((ModuleEntry = FindModule(Module)))
     {
         /* Run raddr2line */
-        sprintf(Command, "%s/tools/rsym/raddr2line %s %s 2>/dev/null", OutputPath, ModuleEntry->Path, Address);
+        sprintf(Command, "%s/host-tools/tools/rsym/raddr2line %s %s 2>/dev/null", OutputPath, ModuleEntry->Path, Address);
         Process = popen(Command, "r");
 
         if(!feof(Process))
