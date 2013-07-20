@@ -366,9 +366,16 @@ int main(int argc, char **argv)
             }
             Ret = ProcessDebugData(console, AppSettings.Timeout, Stage);
 
-            /* Kill the VM */
+            /* Get VM info in order to shutdown.
+             * NB: In case the VM was properly shutdown by ReactOS,
+             * This will display an error in output.
+             * It can be safely ignored, all fine.
+             * Error message with KVM:
+             * libvir: QEMU error : Requested operation is not valid: domain is not running
+             */
             virDomainGetInfo(vDom, &info);
 
+            /* Kill the VM - if running */
             if (info.state != VIR_DOMAIN_SHUTOFF)
                 virDomainDestroy(vDom);
 
