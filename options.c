@@ -167,7 +167,7 @@ bool LoadSettings(const char* XmlConfig)
     if (obj)
         xmlXPathFreeObject(obj);
 
-    for (Stage=0;Stage<3;Stage++)
+    for (Stage = 0; Stage < NUM_STAGES; Stage++)
     {
         strcpy(TempStr, "string(/settings/");
         strcat(TempStr, StageNames[Stage]);

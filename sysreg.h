@@ -55,7 +55,7 @@ typedef struct _Settings
     char Name[80];
     char HardDiskImage[255];
     int ImageSize;
-    stage Stage[3];
+    stage Stage[NUM_STAGES];
     unsigned int MaxCacheHits;
     unsigned int MaxRetries;
     unsigned int MaxConts;
