@@ -4,7 +4,7 @@
  * PURPOSE:     Main entry point and controlling the virtual machine
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
- *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
+ *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -344,6 +344,18 @@ int main(int argc, char **argv)
 
     for(Stage = 0; Stage < NUM_STAGES; Stage++)
     {
+        /* Execute hook command before stage if any */
+        if (AppSettings.Stage[Stage].HookCommand[0] != 0)
+        {
+            SysregPrintf("Applying hook: %s\n", AppSettings.Stage[Stage].HookCommand);
+            int out = Execute(AppSettings.Stage[Stage].HookCommand);
+            if (out < 0)
+            {
+                SysregPrintf("Hook command failed!\n");
+                goto cleanup;
+            }
+        }
+
         for(Retries = 0; Retries < AppSettings.MaxRetries; Retries++)
         {
             vDom = LaunchVirtualMachine(vConn, AppSettings.Filename,

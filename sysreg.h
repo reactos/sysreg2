@@ -4,7 +4,7 @@
  * PURPOSE:     Shared header
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
- *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
+ *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include <dirent.h>
@@ -45,6 +45,7 @@ typedef struct _stage
 {
     char BootDevice[8];
     char Checkpoint[80];
+    char HookCommand[255];
 }
 stage;
 
@@ -89,6 +90,7 @@ ModuleListEntry;
 char* ReadFile (const char* filename);
 ssize_t safewrite(int fd, const void *buf, size_t count, int timeout);
 void SysregPrintf(const char* format, ...);
+int Execute(const char * command);
 
 /* options.c */
 bool LoadSettings(const char* XmlConfig);

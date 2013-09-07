@@ -4,7 +4,7 @@
  * PURPOSE:     Loading the utility settings
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
- *              Copyright 2012 Pierre Schweitzer <pierre@reactos.org>
+ *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -180,6 +180,19 @@ bool LoadSettings(const char* XmlConfig)
         }
         if (obj)
             xmlXPathFreeObject(obj);
+
+        strcpy(TempStr, "string(/settings/");
+        strcat(TempStr, StageNames[Stage]);
+        strcat(TempStr, "/@hookcommand)");
+        obj = xmlXPathEval((xmlChar*) TempStr,ctxt);
+        if ((obj != NULL) && ((obj->type == XPATH_STRING) &&
+                (obj->stringval != NULL) && (obj->stringval[0] != 0)))
+        {
+            strncpy(AppSettings.Stage[Stage].HookCommand, (char *)obj->stringval, 254);
+        }
+        if (obj)
+            xmlXPathFreeObject(obj);
+
         strcpy(TempStr, "string(/settings/");
         strcat(TempStr, StageNames[Stage]);
         strcat(TempStr, "/success/@on)");

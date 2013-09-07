@@ -4,6 +4,7 @@
  * PURPOSE:     Various auxiliary functions
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2013 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
@@ -97,4 +98,23 @@ void SysregPrintf(const char* format, ...)
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
+}
+
+int Execute(const char * command)
+{
+    FILE* in;
+    char out[255];
+
+    in = popen(command, "r");
+    if (in == NULL)
+    {
+        SysregPrintf("popen() failed: %d\n", errno);
+        return -errno;
+    }
+
+    while (fgets(out, 255, in) != NULL) {
+        printf("%s", out);
+    }
+
+    return pclose(in);
 }
