@@ -27,7 +27,7 @@ $(TARGET): $(OBJS_C) $(OBJS_CPP)
 
 revision.c:
 	echo 'const int SVNRev = ' > revision.c
-	LANG=C svn info | grep Revision | cut -f 2 -d " " >> revision.c
+	LC_ALL=C LANG=C svn info | grep Revision | cut -f 2 -d " " >> revision.c
 	echo ';' >> revision.c
 
 .PHONY: clean
