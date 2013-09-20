@@ -77,7 +77,7 @@ void LibVirt::InitializeDisk()
     /* Create a new HD image */
     if (AppSettings.VMType == TYPE_KVM)
     {
-        sprintf(qemu_img_cmdline, "qemu-img create -f qcow2 %s %dM",
+        sprintf(qemu_img_cmdline, "qemu-img create -f raw %s %dM",
                 AppSettings.HardDiskImage, AppSettings.ImageSize);
     }
     else if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
