@@ -1,0 +1,164 @@
+/*
+ * PROJECT:     ReactOS System Regression Testing Utility
+ * LICENSE:     GNU GPLv2 or any later version as published by the Free Software Foundation
+ * PURPOSE:     Main entry point and controlling the virtual machine
+ * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
+ *              Copyright 2009 Colin Finck <colin@reactos.org>
+ *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
+ */
+
+#include "sysreg.h"
+#include "machine.h"
+
+const char DefaultOutputPath[] = "output-i386";
+const char* OutputPath;
+Settings AppSettings;
+ModuleListEntry* ModuleList;
+
+int main(int argc, char **argv)
+{
+    char config[255];
+    int Ret = EXIT_DONT_CONTINUE;
+    char console[50];
+    unsigned int Retries;
+    unsigned int Stage;
+    Machine * TestMachine;
+
+    /* Get the output path to the built ReactOS files */
+    OutputPath = getenv("ROS_OUTPUT");
+    if(!OutputPath)
+        OutputPath = DefaultOutputPath;
+
+    InitializeModuleList();
+
+    if (argc == 2)
+        strcpy(config, argv[1]);
+    else
+        strcpy(config, "sysreg.xml");
+
+    SysregPrintf("sysreg2 r%d starting\n", SVNRev);
+
+    if (!LoadSettings(config))
+    {
+        SysregPrintf("Cannot load configuration file\n");
+        goto cleanup;
+    }
+
+    /* Allocate proper machine */
+    switch (AppSettings.VMType)
+    {
+        case TYPE_KVM:
+            TestMachine = new KVM();
+            break;
+
+        case TYPE_VMWARE_PLAYER:
+            TestMachine = new VMWarePlayer();
+            break;
+
+        case TYPE_VMWARE_ESX:
+            TestMachine = new VMWareESX();
+            break;
+    }
+
+    /* Shutdown the machine if already running */
+    if (TestMachine->IsMachineRunning(AppSettings.Name, true))
+    {
+        SysregPrintf("Error: Test Machine is still running.\n");
+        goto cleanup;
+    }
+
+    /* Initialize disk if needed */
+    TestMachine->InitializeDisk();
+
+    for(Stage = 0; Stage < NUM_STAGES; Stage++)
+    {
+        /* Execute hook command before stage if any */
+        if (AppSettings.Stage[Stage].HookCommand[0] != 0)
+        {
+            SysregPrintf("Applying hook: %s\n", AppSettings.Stage[Stage].HookCommand);
+            int out = Execute(AppSettings.Stage[Stage].HookCommand);
+            if (out < 0)
+            {
+                SysregPrintf("Hook command failed!\n");
+                goto cleanup;
+            }
+        }
+
+        for(Retries = 0; Retries < AppSettings.MaxRetries; Retries++)
+        {
+            if (!TestMachine->LaunchMachine(AppSettings.Filename,
+                                            AppSettings.Stage[Stage].BootDevice))
+            {
+                SysregPrintf("LaunchMachine failed!\n");
+                goto cleanup;
+            }
+
+            printf("\n\n\n");
+            SysregPrintf("Running stage %d...\n", Stage + 1);
+            SysregPrintf("Domain %s started.\n", TestMachine->GetMachineName());
+
+            if (!TestMachine->GetConsole(console))
+            {
+                SysregPrintf("GetConsole failed!\n");
+                goto cleanup;
+            }
+            Ret = ProcessDebugData(console, AppSettings.Timeout, Stage);
+
+            TestMachine->ShutdownMachine();
+
+            usleep(1000);
+
+            /* If we have a checkpoint to reach for success, assume that
+               the application used for running the tests (probably "rosautotest")
+               continues with the next test after a VM restart. */
+            if (Ret == EXIT_CONTINUE && *AppSettings.Stage[Stage].Checkpoint)
+                SysregPrintf("Rebooting machine (retry %d)\n", Retries + 1);
+            else
+                break;
+        }
+
+        if (Retries == AppSettings.MaxRetries)
+        {
+            SysregPrintf("Maximum number of allowed retries exceeded, aborting!\n");
+            break;
+        }
+
+        if (Ret == EXIT_DONT_CONTINUE)
+            break;
+    }
+
+
+cleanup:
+    CleanModuleList();
+
+    if (AppSettings.VMType == TYPE_VMWARE_ESX)
+    {
+        if (AppSettings.Specific.VMwareESX.Domain)
+            free(AppSettings.Specific.VMwareESX.Domain);
+
+        if (AppSettings.Specific.VMwareESX.Username)
+            free(AppSettings.Specific.VMwareESX.Username);
+
+        if (AppSettings.Specific.VMwareESX.Password)
+            free(AppSettings.Specific.VMwareESX.Password);
+    }
+
+    switch (Ret)
+    {
+        case EXIT_CHECKPOINT_REACHED:
+            SysregPrintf("Status: Reached the checkpoint!\n");
+            break;
+
+        case EXIT_CONTINUE:
+            SysregPrintf("Status: Failed to reach the checkpoint!\n");
+            break;
+
+        case EXIT_DONT_CONTINUE:
+            SysregPrintf("Status: Testing process aborted!\n");
+            break;
+    }
+
+    delete TestMachine;
+
+    return Ret;
+}

@@ -55,8 +55,6 @@ bool LoadSettings(const char* XmlConfig)
     {
         if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareplayer") == 0)
             AppSettings.VMType = TYPE_VMWARE_PLAYER;
-        else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwaregsx") == 0)
-            AppSettings.VMType = TYPE_VMWARE_GSX;
         else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareesx") == 0)
             AppSettings.VMType = TYPE_VMWARE_ESX;
     }
@@ -64,8 +62,7 @@ bool LoadSettings(const char* XmlConfig)
         xmlXPathFreeObject(obj);
 
     /* Get ids & domain */
-    if (AppSettings.VMType == TYPE_VMWARE_GSX ||
-        AppSettings.VMType == TYPE_VMWARE_ESX)
+    if (AppSettings.VMType == TYPE_VMWARE_ESX)
     {
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@domain)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)

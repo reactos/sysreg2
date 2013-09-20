@@ -5,17 +5,21 @@ TARGET := sysreg2
 all: $(TARGET)
 
 CC=gcc
-CFLAGS := -g -O0 -std=c99 -D_GNU_SOURCE -Wall -Wextra
+CXX=g++
+INCLUDE_DIR = -I/usr/include/libvirt/ -I/usr/include/libxml2/
+CFLAGS := $(INCLUDE_DIR) -g -O0 -std=c99 -D_GNU_SOURCE -Wall -Wextra
+CXXFLAGS := $(INCLUDE_DIR) -g -O0 -D_GNU_SOURCE -Wall -Wextra
 LFLAGS := -L/usr/lib64
 LIBS := -lvirt -lxml2
-INC := -I/usr/include/libvirt/ -I/usr/include/libxml2/
 
-SRCS := virt.c utils.c console.c options.c raddr2line.c revision.c
+SRCS_C := utils.c console.c options.c raddr2line.c revision.c
+SRCS_CPP := virt.cpp libvirt.cpp vmware_esx.cpp vmware_player.cpp kvm.cpp
 
-OBJS := $(SRCS:.c=.o)
+OBJS_C := $(SRCS_C:.c=.o)
+OBJS_CPP := $(SRCS_CPP:.cpp=.o)
 
-$(TARGET): $(OBJS)
-	$(CC) $(LFLAGS) -o $@ $(OBJS) $(LIBS)
+$(TARGET): $(OBJS_C) $(OBJS_CPP)
+	$(CXX) $(LFLAGS) -o $@ $(OBJS_CPP) $(OBJS_C) $(LIBS)
 	rm revision.c
 
 .c.o: revision.c $<
@@ -29,5 +33,6 @@ revision.c:
 .PHONY: clean
 clean:
 	-@rm $(TARGET)
-	-@rm $(OBJS)
+	-@rm $(OBJS_C)
+	-@rm $(OBJS_CPP)
 					

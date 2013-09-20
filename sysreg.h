@@ -7,6 +7,9 @@
  *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
  */
 
+#ifndef __SYSREG_H__
+#define __SYSREG_H__
+
 #include <dirent.h>
 #include <fcntl.h>
 #include <libvirt.h>
@@ -36,8 +39,12 @@
 
 #define TYPE_KVM                    0
 #define TYPE_VMWARE_PLAYER          1
-#define TYPE_VMWARE_GSX             2
-#define TYPE_VMWARE_ESX             3
+#define TYPE_VMWARE_ESX             2
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 extern const int SVNRev;
 
@@ -107,3 +114,9 @@ bool ResolveAddressFromFile(char* Buffer, size_t BufferSize, const char* Data);
 extern const char* OutputPath;
 extern Settings AppSettings;
 extern ModuleListEntry* ModuleList;
+
+#ifdef __cplusplus 
+}
+#endif
+
+#endif
