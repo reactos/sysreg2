@@ -17,7 +17,6 @@ ModuleListEntry* ModuleList;
 
 int main(int argc, char **argv)
 {
-    char config[255];
     int Ret = EXIT_DONT_CONTINUE;
     char console[50];
     unsigned int Retries;
@@ -31,14 +30,9 @@ int main(int argc, char **argv)
 
     InitializeModuleList();
 
-    if (argc == 2)
-        strcpy(config, argv[1]);
-    else
-        strcpy(config, "sysreg.xml");
-
     SysregPrintf("sysreg2 r%d starting\n", SVNRev);
 
-    if (!LoadSettings(config))
+    if (!LoadSettings(argc > 1 ? argv[1] : "sysreg.xml"))
     {
         SysregPrintf("Cannot load configuration file\n");
         goto cleanup;
