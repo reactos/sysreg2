@@ -239,30 +239,20 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
                 if (KdbgHit == 1)
                 {
-                    if (!Assert)
+                    /* If we have an assert break once
+                     * Otherwise we hit Kdbg for the first time, get a backtrace for the log
+                     */
+                    if (safewriteex(ttyfd, (Assert ? "o\r" : "bt\r"), (Assert ? 2 : 3), timeout) < 0
+                        && errno == EWOULDBLOCK)
                     {
-                        /* We hit Kdbg for the first time, get a backtrace for the log */
-                        if (safewrite(ttyfd, "bt\r", timeout) < 0 && errno == EWOULDBLOCK)
-                        {
-                            /* timeout */
-                            SysregPrintf("timeout\n");
-                            Ret = EXIT_CONTINUE;
-                            goto cleanup;
-                        }
+                        /* timeout */
+                        SysregPrintf("timeout\n");
+                        Ret = EXIT_CONTINUE;
+                        goto cleanup;
+                        /* No need to reset Assert here, we will quit */
                     }
-                    else
-                    {
-                        Assert = false;
 
-                        /* Break once */
-                        if (safewrite(ttyfd, "o\r", timeout) < 0 && errno == EWOULDBLOCK)
-                        {
-                            /* timeout */
-                            SysregPrintf("timeout\n");
-                            Ret = EXIT_CONTINUE;
-                            goto cleanup;
-                        }
-                    }
+                    Assert = false;
 
                     continue;
                 }
