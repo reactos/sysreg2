@@ -9,7 +9,7 @@
 
 #include "sysreg.h"
 
-ssize_t safewrite(int fd, const void *buf, size_t count, int timeout)
+ssize_t safewriteex(int fd, const void *buf, size_t count, int timeout)
 {
     struct pollfd fds[] = {
         { fd, POLLOUT, 0 },

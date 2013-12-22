@@ -97,7 +97,8 @@ ModuleListEntry;
 
 /* utils.c */
 char* ReadFile (const char* filename);
-ssize_t safewrite(int fd, const void *buf, size_t count, int timeout);
+ssize_t safewriteex(int fd, const void *buf, size_t count, int timeout);
+#define safewrite(fd, buf, timeout) safewriteex(fd, buf, sizeof(buf) / sizeof(buf[0]) - 1, timeout)
 void SysregPrintf(const char* format, ...);
 int Execute(const char * command);
 

@@ -242,7 +242,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     if (!Assert)
                     {
                         /* We hit Kdbg for the first time, get a backtrace for the log */
-                        if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK)
+                        if (safewrite(ttyfd, "bt\r", timeout) < 0 && errno == EWOULDBLOCK)
                         {
                             /* timeout */
                             SysregPrintf("timeout\n");
@@ -255,7 +255,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                         Assert = false;
 
                         /* Break once */
-                        if (safewrite(ttyfd, "o\r", 2, timeout) < 0 && errno == EWOULDBLOCK)
+                        if (safewrite(ttyfd, "o\r", timeout) < 0 && errno == EWOULDBLOCK)
                         {
                             /* timeout */
                             SysregPrintf("timeout\n");
@@ -275,7 +275,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                         KdbgHit = 0;
 
                         /* Try to continue */
-                        if (safewrite(ttyfd, "cont\r", 5, timeout) < 0 && errno == EWOULDBLOCK)
+                        if (safewrite(ttyfd, "cont\r", timeout) < 0 && errno == EWOULDBLOCK)
                         {
                             /* timeout */
                             SysregPrintf("timeout\n");
@@ -298,7 +298,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             else if (strstr(Buffer, "--- Press q"))
             {
                 /* Send Return to get more data from Kdbg */
-                if (safewrite(ttyfd, "\r", 1, timeout) < 0 && errno == EWOULDBLOCK)
+                if (safewrite(ttyfd, "\r", timeout) < 0 && errno == EWOULDBLOCK)
                 {
                     /* timeout */
                     SysregPrintf("timeout\n");
