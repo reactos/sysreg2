@@ -54,13 +54,13 @@ bool LibVirt::IsMachineRunning(const char* name, bool destroy)
                     if (!Ret) virDomainUndefine(vDomPtr);
                 }
                 virDomainFree(vDomPtr);
-                free(ids);
+                delete[] ids;
                 return Ret;
             }
             virDomainFree(vDomPtr);
         }
     }
-    delete ids;
+    delete[] ids;
     return false;
 }
 
