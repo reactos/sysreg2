@@ -25,7 +25,6 @@ bool LibVirt::IsMachineRunning(const char* name, bool destroy)
     int* ids = NULL;
     int numids;
     int maxids = 0;
-    const char* domname;
     virDomainPtr vDomPtr = NULL;
 
     maxids = virConnectNumOfDomains(vConn);
@@ -43,7 +42,7 @@ bool LibVirt::IsMachineRunning(const char* name, bool destroy)
         for(i=0; i<numids; i++)
         {
             vDomPtr = virDomainLookupByID(vConn, ids[i]);
-            domname = virDomainGetName(vDomPtr);
+            const char *domname = virDomainGetName(vDomPtr);
             if (strcasecmp(name, domname) == 0)
             {
                 bool Ret = true;
@@ -104,8 +103,6 @@ bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
     xmlXPathObjectPtr obj = NULL;
     xmlXPathContextPtr ctxt = NULL;
     char* buffer;
-    const char* name;
-    char* domname;
     int len = 0;
 
     buffer = ReadFile(XmlFileName);
@@ -155,8 +152,8 @@ bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
         else
         {
             /* workaround a bug in libvirt */
-            name = virDomainGetName(vDom);
-            domname = strdup(name);
+            const char *name = virDomainGetName(vDom);
+            char *domname = strdup(name);
             virDomainFree(vDom);
             vDom = virDomainLookupByName(vConn, domname);
             free(domname);

@@ -82,7 +82,6 @@ void InitializeModuleList()
 void CleanModuleList()
 {
     ModuleListEntry* CurrentElement;
-    ModuleListEntry* PreviousElement;
 
     CurrentElement = ModuleList->Next;
 
@@ -91,7 +90,7 @@ void CleanModuleList()
         free(CurrentElement->Module);
         free(CurrentElement->Path);
 
-        PreviousElement = CurrentElement;
+        ModuleListEntry* PreviousElement = CurrentElement;
         CurrentElement = CurrentElement->Next;
         free(PreviousElement);
     }
@@ -121,10 +120,8 @@ bool ResolveAddressFromFile(char* Buffer, size_t BufferSize, const char* Data)
     bool ReturnValue = false;
     char* Address = NULL;
     char* AddressStart;
-    char Command[256];
     char* Module = NULL;
     char* pBuffer;
-    FILE* Process;
     ModuleListEntry* ModuleEntry;
     size_t AddressLength;
 
@@ -157,9 +154,11 @@ bool ResolveAddressFromFile(char* Buffer, size_t BufferSize, const char* Data)
     /* Try to find the path to this module */
     if ((ModuleEntry = FindModule(Module)))
     {
+        char Command[256];
+
         /* Run raddr2line */
         sprintf(Command, "%s/host-tools/tools/rsym/raddr2line %s %s 2>/dev/null", OutputPath, ModuleEntry->Path, Address);
-        Process = popen(Command, "r");
+        FILE* Process = popen(Command, "r");
 
         if(!feof(Process))
         {
