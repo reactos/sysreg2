@@ -25,6 +25,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     unsigned int KdbgHit = 0;
     unsigned int Cont = 0;
     bool AlreadyBooted = false;
+    bool Assert = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -238,13 +239,29 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
                 if (KdbgHit == 1)
                 {
-                    /* We hit Kdbg for the first time, get a backtrace for the log */
-                    if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK)
+                    if (!Assert)
                     {
-                        /* timeout */
-                        SysregPrintf("timeout\n");
-                        Ret = EXIT_CONTINUE;
-                        goto cleanup;
+                        /* We hit Kdbg for the first time, get a backtrace for the log */
+                        if (safewrite(ttyfd, "bt\r", 3, timeout) < 0 && errno == EWOULDBLOCK)
+                        {
+                            /* timeout */
+                            SysregPrintf("timeout\n");
+                            Ret = EXIT_CONTINUE;
+                            goto cleanup;
+                        }
+                    }
+                    else
+                    {
+                        Assert = false;
+
+                        /* Break once */
+                        if (safewrite(ttyfd, "o\r", 2, timeout) < 0 && errno == EWOULDBLOCK)
+                        {
+                            /* timeout */
+                            SysregPrintf("timeout\n");
+                            Ret = EXIT_CONTINUE;
+                            goto cleanup;
+                        }
                     }
 
                     continue;
@@ -289,6 +306,11 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     goto cleanup;
                 }
                 continue;
+            }
+            else if (strstr(Buffer, "Break repea"))
+            {
+                /* Next kdb prompt will be for an assert */
+                Assert = true;
             }
             else if (strstr(Buffer, "SYSREG_ROSAUTOTEST_FAILURE"))
             {
