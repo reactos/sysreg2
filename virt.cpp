@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     char console[50];
     unsigned int Retries;
     unsigned int Stage;
-    Machine * TestMachine;
+    Machine * TestMachine = 0;
 
     /* Get the output path to the built ReactOS files */
     OutputPath = getenv("ROS_OUTPUT");
