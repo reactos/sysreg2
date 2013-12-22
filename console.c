@@ -104,6 +104,15 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             goto cleanup;
         }
 
+        /* Check for global timeout */
+        if (time(0) >= AppSettings.GlobalTimeout)
+        {
+            /* global timeout */
+            SysregPrintf("global timeout\n");
+            Ret = EXIT_DONT_CONTINUE;
+            goto cleanup;
+        }
+
         for (i = 0; i < (sizeof(fds) / sizeof(struct pollfd)); i++)
         {
             /* Wait till we get some input from the fd */

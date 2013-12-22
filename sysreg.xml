@@ -6,6 +6,10 @@
 		<!-- kill the VM after n milliseconds without debug msg -->
 		<timeout ms="20000"/>
 
+		<!-- kill the test process if it takes more than n seconds
+		     The VM will be killed even if it is still verbose -->
+		<globaltimeout s="3600"/>
+
 		<!-- size of the hdd image in MB -->
 		<hdd size="512"/>
 

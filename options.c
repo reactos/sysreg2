@@ -129,6 +129,16 @@ bool LoadSettings(const char* XmlConfig)
     if (obj)
         xmlXPathFreeObject(obj);
 
+    /* First set current time, then add timeout value */
+    AppSettings.GlobalTimeout = time(0);
+    obj = xmlXPathEval(BAD_CAST"number(/settings/general/globaltimeout/@s)",ctxt);
+    if ((obj != NULL) && (obj->type == XPATH_NUMBER))
+    {
+        AppSettings.GlobalTimeout += (int)obj->floatval;
+    }
+    if (obj)
+        xmlXPathFreeObject(obj);
+
     obj = xmlXPathEval(BAD_CAST"number(/settings/general/maxcachehits/@value)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_NUMBER))
     {

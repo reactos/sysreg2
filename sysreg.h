@@ -22,6 +22,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <errno.h>
+#include <time.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -59,6 +60,7 @@ stage;
 typedef struct _Settings
 {
     int Timeout;
+    int GlobalTimeout;
     char Filename[255];
     char Name[80];
     char HardDiskImage[255];
