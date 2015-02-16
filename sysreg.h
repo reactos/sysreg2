@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/time.h>
 
 #define EXIT_CHECKPOINT_REACHED     0
 #define EXIT_CONTINUE               1

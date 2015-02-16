@@ -80,6 +80,8 @@ int main(int argc, char **argv)
 
         for(Retries = 0; Retries < AppSettings.MaxRetries; Retries++)
         {
+            struct timeval StartTime, EndTime, ElapsedTime;
+
             if (!TestMachine->LaunchMachine(AppSettings.Filename,
                                             AppSettings.Stage[Stage].BootDevice))
             {
@@ -91,6 +93,8 @@ int main(int argc, char **argv)
             SysregPrintf("Running stage %d...\n", Stage + 1);
             SysregPrintf("Domain %s started.\n", TestMachine->GetMachineName());
 
+            gettimeofday(&StartTime, NULL);
+
             if (!TestMachine->GetConsole(console))
             {
                 SysregPrintf("GetConsole failed!\n");
@@ -98,7 +102,12 @@ int main(int argc, char **argv)
             }
             Ret = ProcessDebugData(console, AppSettings.Timeout, Stage);
 
+            gettimeofday(&EndTime, NULL);
+
             TestMachine->ShutdownMachine();
+
+            timersub(&EndTime, &StartTime, &ElapsedTime);
+            SysregPrintf("Stage took: %ld.%06ld seconds\n", ElapsedTime.tv_sec, ElapsedTime.tv_usec);
 
             usleep(1000);
 
