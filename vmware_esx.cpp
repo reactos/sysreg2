@@ -16,8 +16,6 @@ VMWareESX::VMWareESX()
     char libvirt_cmdline[300];
     virConnectAuth vAuth;
 
-    
-
     strcpy(libvirt_cmdline, "esx://");
     if (AppSettings.Specific.VMwareESX.Username)
     {
