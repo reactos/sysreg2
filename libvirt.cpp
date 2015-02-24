@@ -89,10 +89,10 @@ void LibVirt::InitializeDisk()
 
     FILE* p = popen(qemu_img_cmdline, "r");
     char buf[100];
-    while(feof(p)==0)
+    while (feof(p) == 0)
     {
-        fgets(buf,100,p);
-        SysregPrintf("%s\n",buf);
+        fgets(buf, 100, p);
+        SysregPrintf("%s\n", buf);
     }
     pclose(p);
 }
