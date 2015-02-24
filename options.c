@@ -57,6 +57,8 @@ bool LoadSettings(const char* XmlConfig)
             AppSettings.VMType = TYPE_VMWARE_PLAYER;
         else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareesx") == 0)
             AppSettings.VMType = TYPE_VMWARE_ESX;
+        else if (xmlStrcasecmp(obj->stringval, BAD_CAST"virtualbox") == 0)
+            AppSettings.VMType = TYPE_VIRTUALBOX;
     }
     if (obj)
         xmlXPathFreeObject(obj);

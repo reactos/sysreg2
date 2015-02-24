@@ -70,4 +70,12 @@ public:
     static int AuthToVMware(virConnectCredentialPtr cred, unsigned int ncred, void *cbdata);
 };
 
+class VirtualBox : public LibVirt
+{
+public:
+    VirtualBox();
+
+    virtual bool GetConsole(char* console);
+};
+
 #endif

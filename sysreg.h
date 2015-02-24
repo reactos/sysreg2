@@ -42,6 +42,7 @@
 #define TYPE_KVM                    0
 #define TYPE_VMWARE_PLAYER          1
 #define TYPE_VMWARE_ESX             2
+#define TYPE_VIRTUALBOX             3
 
 #ifdef __cplusplus
 extern "C"

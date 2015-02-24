@@ -52,6 +52,10 @@ int main(int argc, char **argv)
         case TYPE_VMWARE_ESX:
             TestMachine = new VMWareESX();
             break;
+
+        case TYPE_VIRTUALBOX:
+            TestMachine = new VirtualBox();
+            break;
     }
 
     /* Shutdown the machine if already running */
