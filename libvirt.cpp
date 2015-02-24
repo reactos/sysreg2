@@ -91,8 +91,8 @@ void LibVirt::InitializeDisk()
     char buf[100];
     while (feof(p) == 0)
     {
-        fgets(buf, 100, p);
-        SysregPrintf("%s\n", buf);
+        if (fgets(buf, 100, p))
+            SysregPrintf("%s\n", buf);
     }
     pclose(p);
 }
