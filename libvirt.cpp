@@ -87,14 +87,7 @@ void LibVirt::InitializeDisk()
                 AppSettings.HardDiskImage, AppSettings.ImageSize);
     }
 
-    FILE* p = popen(qemu_img_cmdline, "r");
-    char buf[100];
-    while (feof(p) == 0)
-    {
-        if (fgets(buf, 100, p))
-            SysregPrintf("%s\n", buf);
-    }
-    pclose(p);
+    Execute(qemu_img_cmdline);
 }
 
 bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
