@@ -18,6 +18,7 @@ public:
 
     virtual bool IsMachineRunning(const char * name, bool destroy) = 0;
     virtual void InitializeDisk() = 0;
+    virtual bool PrepareSerialPort() = 0;
     virtual bool LaunchMachine(const char* XmlFileName, const char* BootDevice) = 0;
     virtual const char * GetMachineName() const = 0;
     virtual bool GetConsole(char* console) = 0;
@@ -34,6 +35,7 @@ public:
 
     virtual bool IsMachineRunning(const char * name, bool destroy);
     virtual void InitializeDisk();
+    virtual bool PrepareSerialPort();
     virtual bool LaunchMachine(const char* XmlFileName, const char* BootDevice);
     virtual const char * GetMachineName() const;
     virtual void ShutdownMachine();
@@ -57,7 +59,7 @@ public:
     VMWarePlayer();
 
     virtual bool GetConsole(char* console);
-    bool StartListeningSocket(void);
+    virtual bool PrepareSerialPort();
 };
 
 class VirtualBox : public LibVirt
@@ -67,7 +69,7 @@ public:
 
     virtual bool GetConsole(char* console);
     virtual void InitializeDisk();
-    bool StartListeningSocket(void);
+    virtual bool PrepareSerialPort();
 };
 
 #endif

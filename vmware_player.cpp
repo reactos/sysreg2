@@ -18,7 +18,7 @@ bool VMWarePlayer::GetConsole(char* console)
     return true;
 }
 
-bool VMWarePlayer::StartListeningSocket(void)
+bool VMWarePlayer::PrepareSerialPort()
 {
     struct sockaddr_un addr;
 

@@ -30,7 +30,7 @@ void VirtualBox::InitializeDisk()
     LibVirt::InitializeDisk();
 }
 
-bool VirtualBox::StartListeningSocket(void)
+bool VirtualBox::PrepareSerialPort()
 {
     struct sockaddr_un addr;
 

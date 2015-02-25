@@ -113,8 +113,7 @@ bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
     xmlFreeDoc(xml);
     xmlXPathFreeContext(ctxt);
 
-    if ((AppSettings.VMType == TYPE_VMWARE_PLAYER && !(dynamic_cast<VMWarePlayer *>(this)->StartListeningSocket())) ||
-        (AppSettings.VMType == TYPE_VIRTUALBOX && !(dynamic_cast<VirtualBox *>(this)->StartListeningSocket())))
+    if (!PrepareSerialPort())
     {
         return false;
     }
@@ -175,4 +174,10 @@ void LibVirt::ShutdownMachine()
         close(AppSettings.Specific.VMwarePlayer.Socket);
         unlink(AppSettings.Specific.VMwarePlayer.Path);
     }
+}
+
+bool LibVirt::PrepareSerialPort()
+{
+    // Do nothing
+    return true;
 }
