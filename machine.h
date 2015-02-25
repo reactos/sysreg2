@@ -2,7 +2,7 @@
  * PROJECT:     ReactOS System Regression Testing Utility
  * LICENSE:     GNU GPLv2 or any later version as published by the Free Software Foundation
  * PURPOSE:     Shared C++ header
- * COPYRIGHT:   Copyright 2013 Pierre Schweitzer <pierre@reactos.org>
+ * COPYRIGHT:   Copyright 2013-2015 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #ifndef __MACHINE_H__

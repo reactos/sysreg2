@@ -4,7 +4,7 @@
  * PURPOSE:     Loading the utility settings
  * COPYRIGHT:   Copyright 2008-2009 Christoph von Wittich <christoph_vw@reactos.org>
  *              Copyright 2009 Colin Finck <colin@reactos.org>
- *              Copyright 2012-2013 Pierre Schweitzer <pierre@reactos.org>
+ *              Copyright 2012-2015 Pierre Schweitzer <pierre@reactos.org>
  */
 
 #include "sysreg.h"
