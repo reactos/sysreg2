@@ -23,6 +23,7 @@ public:
     virtual const char * GetMachineName() const = 0;
     virtual bool GetConsole(char* console) = 0;
     virtual void ShutdownMachine() = 0;
+    virtual void CloseSerialPort() = 0;
 
     virtual ~Machine() {};
 };
@@ -39,6 +40,7 @@ public:
     virtual bool LaunchMachine(const char* XmlFileName, const char* BootDevice);
     virtual const char * GetMachineName() const;
     virtual void ShutdownMachine();
+    virtual void CloseSerialPort();
 
 protected:
     virConnectPtr vConn;
@@ -60,6 +62,7 @@ public:
 
     virtual bool GetConsole(char* console);
     virtual bool PrepareSerialPort();
+    virtual void CloseSerialPort();
 };
 
 class VirtualBox : public LibVirt
@@ -70,6 +73,7 @@ public:
     virtual bool GetConsole(char* console);
     virtual void InitializeDisk();
     virtual bool PrepareSerialPort();
+    virtual void CloseSerialPort();
 };
 
 #endif

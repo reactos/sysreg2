@@ -35,3 +35,8 @@ bool VirtualBox::PrepareSerialPort()
     return CreateLocalSocket();
 }
 
+void VirtualBox::CloseSerialPort()
+{
+    close(AppSettings.Specific.VMwarePlayer.Socket);
+    unlink(AppSettings.Specific.VMwarePlayer.Path);
+}
