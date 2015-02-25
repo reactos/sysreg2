@@ -41,8 +41,7 @@
 
 #define TYPE_KVM                    0
 #define TYPE_VMWARE_PLAYER          1
-#define TYPE_VMWARE_ESX             2
-#define TYPE_VIRTUALBOX             3
+#define TYPE_VIRTUALBOX             2
 
 #ifdef __cplusplus
 extern "C"
@@ -79,12 +78,6 @@ typedef struct _Settings
             char Path[255];
             int Socket;
         } VMwarePlayer;
-        struct
-        {
-            char* Username;
-            char* Password;
-            char* Domain;
-        } VMwareESX;
     } Specific;
 }
 Settings;

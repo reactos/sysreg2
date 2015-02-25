@@ -55,61 +55,13 @@ bool LoadSettings(const char* XmlConfig)
     {
         if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareplayer") == 0)
             AppSettings.VMType = TYPE_VMWARE_PLAYER;
-        else if (xmlStrcasecmp(obj->stringval, BAD_CAST"vmwareesx") == 0)
-            AppSettings.VMType = TYPE_VMWARE_ESX;
         else if (xmlStrcasecmp(obj->stringval, BAD_CAST"virtualbox") == 0)
             AppSettings.VMType = TYPE_VIRTUALBOX;
     }
     if (obj)
         xmlXPathFreeObject(obj);
 
-    /* Get ids & domain */
-    if (AppSettings.VMType == TYPE_VMWARE_ESX)
-    {
-        obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@domain)",ctxt);
-        if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
-        {
-            AppSettings.Specific.VMwareESX.Domain = malloc(xmlStrlen(obj->stringval) + 1);
-            if (AppSettings.Specific.VMwareESX.Domain)
-            {
-                strcpy(AppSettings.Specific.VMwareESX.Domain, (char *)obj->stringval);
-            }
-        }
-
-        if (obj)
-            xmlXPathFreeObject(obj);
-
-        obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@username)",ctxt);
-        if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
-        {
-            AppSettings.Specific.VMwareESX.Username = malloc(xmlStrlen(obj->stringval) + 1);
-            if (AppSettings.Specific.VMwareESX.Username)
-            {
-                strcpy(AppSettings.Specific.VMwareESX.Username, (char *)obj->stringval);
-            }
-        }
-
-        if (obj)
-            xmlXPathFreeObject(obj);
-
-        /* Get password only if there is an user name */
-        if (AppSettings.Specific.VMwareESX.Username)
-        {
-            obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@password)",ctxt);
-            if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
-            {
-                AppSettings.Specific.VMwareESX.Password = malloc(xmlStrlen(obj->stringval) + 1);
-                if (AppSettings.Specific.VMwareESX.Password)
-                {
-                    strcpy(AppSettings.Specific.VMwareESX.Password, (char *)obj->stringval);
-                }
-            }
-
-            if (obj)
-                xmlXPathFreeObject(obj);
-        }
-    }
-    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER || AppSettings.VMType == TYPE_VIRTUALBOX)
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER || AppSettings.VMType == TYPE_VIRTUALBOX)
     {
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@serial)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)

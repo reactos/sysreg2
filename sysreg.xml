@@ -1,6 +1,6 @@
 <settings vm="ReactOS" file="/opt/buildbot/sysreg2/reactos.xml">
 	<general>
-		<!-- Use KVM, VMwarePlayer, VMwareESX or VirtualBox -->
+		<!-- Use KVM, VMwarePlayer or VirtualBox -->
 		<vm type="kvm"/>
 
 		<!-- kill the VM after n milliseconds without debug msg -->

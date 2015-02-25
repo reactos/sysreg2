@@ -49,10 +49,6 @@ int main(int argc, char **argv)
             TestMachine = new VMWarePlayer();
             break;
 
-        case TYPE_VMWARE_ESX:
-            TestMachine = new VMWareESX();
-            break;
-
         case TYPE_VIRTUALBOX:
             TestMachine = new VirtualBox();
             break;
@@ -137,18 +133,6 @@ int main(int argc, char **argv)
 
 cleanup:
     CleanModuleList();
-
-    if (AppSettings.VMType == TYPE_VMWARE_ESX)
-    {
-        if (AppSettings.Specific.VMwareESX.Domain)
-            free(AppSettings.Specific.VMwareESX.Domain);
-
-        if (AppSettings.Specific.VMwareESX.Username)
-            free(AppSettings.Specific.VMwareESX.Username);
-
-        if (AppSettings.Specific.VMwareESX.Password)
-            free(AppSettings.Specific.VMwareESX.Password);
-    }
 
     switch (Ret)
     {

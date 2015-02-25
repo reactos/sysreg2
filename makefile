@@ -13,7 +13,7 @@ LFLAGS := -L/usr/lib64
 LIBS := -lvirt -lxml2
 
 SRCS_C := utils.c console.c options.c raddr2line.c revision.c
-SRCS_CPP := virt.cpp libvirt.cpp vmware_esx.cpp vmware_player.cpp kvm.cpp virtualbox.cpp
+SRCS_CPP := virt.cpp libvirt.cpp vmware_player.cpp kvm.cpp virtualbox.cpp
 
 OBJS_C := $(SRCS_C:.c=.o)
 OBJS_CPP := $(SRCS_CPP:.cpp=.o)

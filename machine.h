@@ -60,16 +60,6 @@ public:
     bool StartListeningSocket(void);
 };
 
-class VMWareESX : public LibVirt
-{
-public:
-    VMWareESX();
-
-    virtual bool GetConsole(char* console);
-
-    static int AuthToVMware(virConnectCredentialPtr cred, unsigned int ncred, void *cbdata);
-};
-
 class VirtualBox : public LibVirt
 {
 public:
