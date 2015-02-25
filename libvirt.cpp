@@ -166,7 +166,13 @@ void LibVirt::ShutdownMachine()
     if (info.state != VIR_DOMAIN_SHUTOFF)
         virDomainDestroy(vDom);
 
-    virDomainUndefine(vDom);
+    for (unsigned int i = 0; i < 12; ++i)
+    {
+        if (virDomainUndefine(vDom) == 0)
+            break;
+
+        sleep(5);
+    }
     virDomainFree(vDom);
 
     CloseSerialPort();
