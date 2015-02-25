@@ -76,6 +76,8 @@ public:
     VirtualBox();
 
     virtual bool GetConsole(char* console);
+    virtual void InitializeDisk();
+    bool StartListeningSocket(void);
 };
 
 #endif

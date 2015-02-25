@@ -30,7 +30,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
 
-    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER || AppSettings.VMType == TYPE_VIRTUALBOX)
     {
         /* Wait for VMware connection */
         if ((ttyfd = accept(AppSettings.Specific.VMwarePlayer.Socket, NULL, NULL)) < 0)
@@ -194,7 +194,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 continue;
 
             /* Hackish way to detect reboot under VMware... */
-            if (AppSettings.VMType == TYPE_VMWARE_PLAYER &&
+            if (((AppSettings.VMType == TYPE_VMWARE_PLAYER) || (AppSettings.VMType == TYPE_VIRTUALBOX)) &&
                 strstr(Buffer, "-----------------------------------------------------"))
             {
                 if (AlreadyBooted)

@@ -68,6 +68,11 @@ void LibVirt::InitializeDisk()
         sprintf(qemu_img_cmdline, "qemu-img create -f vmdk %s %dM",
                 AppSettings.HardDiskImage, AppSettings.ImageSize);
     }
+    else if (AppSettings.VMType == TYPE_VIRTUALBOX)
+    {
+        sprintf(qemu_img_cmdline, "qemu-img create -f vdi %s %dM",
+                AppSettings.HardDiskImage, AppSettings.ImageSize);
+    }
 
     Execute(qemu_img_cmdline);
 }
@@ -108,7 +113,8 @@ bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
     xmlFreeDoc(xml);
     xmlXPathFreeContext(ctxt);
 
-    if (AppSettings.VMType == TYPE_VMWARE_PLAYER && !(dynamic_cast<VMWarePlayer *>(this)->StartListeningSocket()))
+    if ((AppSettings.VMType == TYPE_VMWARE_PLAYER && !(dynamic_cast<VMWarePlayer *>(this)->StartListeningSocket())) ||
+        (AppSettings.VMType == TYPE_VIRTUALBOX && !(dynamic_cast<VirtualBox *>(this)->StartListeningSocket())))
     {
         return false;
     }

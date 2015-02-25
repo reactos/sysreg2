@@ -109,7 +109,7 @@ bool LoadSettings(const char* XmlConfig)
                 xmlXPathFreeObject(obj);
         }
     }
-    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    else if (AppSettings.VMType == TYPE_VMWARE_PLAYER || AppSettings.VMType == TYPE_VIRTUALBOX)
     {
         obj = xmlXPathEval(BAD_CAST"string(/settings/general/vm/@serial)",ctxt);
         if ((obj != NULL) && (obj->type == XPATH_STRING) && obj->stringval[0] != 0)
