@@ -112,8 +112,10 @@ int Execute(const char * command)
         return -errno;
     }
 
-    while (fgets(out, 255, in) != NULL) {
-        printf("%s", out);
+    while (feof(in) == 0)
+    {
+        if (fgets(out, 255, in) != NULL)
+            SysregPrintf("%s", out);
     }
 
     return pclose(in);
