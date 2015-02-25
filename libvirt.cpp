@@ -22,45 +22,27 @@ LibVirt::~LibVirt()
 
 bool LibVirt::IsMachineRunning(const char* name, bool destroy)
 {
-    int* ids = NULL;
-    int numids;
-    int maxids = 0;
+    bool Ret;
     virDomainPtr vDomPtr = NULL;
 
-    maxids = virConnectNumOfDomains(vConn);
-    if (maxids < 0)
+    vDomPtr = virDomainLookupByName(vConn, name);
+    if (vDomPtr == 0)
         return false;
 
-    ids = new (std::nothrow) int[maxids];
-    if (!ids)
-        return false;
-
-    numids = virConnectListDomains(vConn, &ids[0], maxids);
-    if (numids > -1)
+    Ret = (virDomainIsActive(vDomPtr) == 1);
+    if (!destroy)
     {
-        int i;
-        for(i=0; i<numids; i++)
-        {
-            vDomPtr = virDomainLookupByID(vConn, ids[i]);
-            const char *domname = virDomainGetName(vDomPtr);
-            if (strcasecmp(name, domname) == 0)
-            {
-                bool Ret = true;
-                /* If asked to destroy the machine, try to do so */
-                if (destroy)
-                {
-                    Ret = (virDomainDestroy(vDomPtr) == -1);
-                    if (!Ret) virDomainUndefine(vDomPtr);
-                }
-                virDomainFree(vDomPtr);
-                delete[] ids;
-                return Ret;
-            }
-            virDomainFree(vDomPtr);
-        }
+        virDomainFree(vDomPtr);
+        return Ret;
     }
-    delete[] ids;
-    return false;
+
+    if (Ret)
+        Ret = (virDomainDestroy(vDomPtr) == 0);
+    virDomainUndefine(vDomPtr);
+
+    virDomainFree(vDomPtr);
+
+    return Ret;
 }
 
 void LibVirt::InitializeDisk()
