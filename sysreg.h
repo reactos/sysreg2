@@ -96,6 +96,7 @@ ssize_t safewriteex(int fd, const void *buf, size_t count, int timeout);
 #define safewrite(fd, buf, timeout) safewriteex(fd, buf, sizeof(buf) / sizeof(buf[0]) - 1, timeout)
 void SysregPrintf(const char* format, ...);
 int Execute(const char * command);
+bool CreateLocalSocket(void);
 
 /* options.c */
 bool LoadSettings(const char* XmlConfig);
@@ -113,7 +114,7 @@ extern const char* OutputPath;
 extern Settings AppSettings;
 extern ModuleListEntry* ModuleList;
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 
