@@ -169,7 +169,7 @@ void LibVirt::ShutdownMachine()
     virDomainUndefine(vDom);
     virDomainFree(vDom);
 
-    if (AppSettings.VMType == TYPE_VMWARE_PLAYER)
+    if (AppSettings.VMType == TYPE_VMWARE_PLAYER || AppSettings.VMType == TYPE_VIRTUALBOX)
     {
         close(AppSettings.Specific.VMwarePlayer.Socket);
         unlink(AppSettings.Specific.VMwarePlayer.Path);
