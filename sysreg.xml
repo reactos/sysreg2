@@ -11,7 +11,7 @@
 		<globaltimeout s="3600"/>
 
 		<!-- size of the hdd image in MB -->
-		<hdd size="512"/>
+		<hdd size="2048"/>
 
 		<!-- Maximum number of line cache hits allowed before we cancel this test and proceed with the next one.
 		     See "console.c" code for more details. -->
