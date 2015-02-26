@@ -132,6 +132,8 @@ int main(int argc, char **argv)
 
 
 cleanup:
+    xmlCleanupParser();
+
     CleanModuleList();
 
     switch (Ret)
