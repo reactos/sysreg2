@@ -189,3 +189,8 @@ void LibVirt::CloseSerialPort()
     // Do nothing
     return;
 }
+
+bool LibVirt::IsConnected() const
+{
+    return (vConn != NULL);
+}

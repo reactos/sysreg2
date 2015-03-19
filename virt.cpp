@@ -54,6 +54,13 @@ int main(int argc, char **argv)
             break;
     }
 
+    /* Don't go any further if connection failed */
+    if (!TestMachine->IsConnected())
+    {
+        SysregPrintf("Error: failed to connect to test machine.\n");
+        goto cleanup;
+    }
+
     /* Shutdown the machine if already running */
     if (TestMachine->IsMachineRunning(AppSettings.Name, true))
     {

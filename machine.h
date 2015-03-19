@@ -24,6 +24,7 @@ public:
     virtual bool GetConsole(char* console) = 0;
     virtual void ShutdownMachine() = 0;
     virtual void CloseSerialPort() = 0;
+    virtual bool IsConnected() const = 0;
 
     virtual ~Machine() {};
 };
@@ -41,6 +42,7 @@ public:
     virtual const char * GetMachineName() const;
     virtual void ShutdownMachine();
     virtual void CloseSerialPort();
+    virtual bool IsConnected() const;
 
 protected:
     virConnectPtr vConn;
