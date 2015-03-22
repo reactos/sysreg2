@@ -84,7 +84,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     {
         struct pollfd fds[] = {
             { STDIN_FILENO, POLLIN, 0 },
-            { ttyfd, POLLIN, 0 },
+            { ttyfd, POLLIN | POLLHUP | POLLERR, 0 },
         };
 
         got = poll(fds, (sizeof(fds) / sizeof(struct pollfd)), timeout);
@@ -116,6 +116,15 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
         for (i = 0; i < (sizeof(fds) / sizeof(struct pollfd)); i++)
         {
+            if ((fds[i].fd == ttyfd) && (
+                (fds[i].revents & POLLHUP) ||
+                (fds[i].revents & POLLERR)))
+            {
+                SysregPrintf("socket error\n");
+                Ret = EXIT_CONTINUE;
+                goto cleanup;
+            }
+
             /* Wait till we get some input from the fd */
             if (!(fds[i].revents & POLLIN))
                 continue;
