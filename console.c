@@ -121,7 +121,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 (fds[i].revents & POLLERR)))
             {
                 SysregPrintf("socket error\n");
-                Ret = EXIT_CONTINUE;
+                Ret = EXIT_DONT_CONTINUE;
                 goto cleanup;
             }
 
