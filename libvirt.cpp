@@ -38,7 +38,14 @@ bool LibVirt::IsMachineRunning(const char* name, bool destroy)
 
     if (Ret)
         Ret = (virDomainDestroy(vDomPtr) == 0);
-    virDomainUndefine(vDomPtr);
+
+    for (unsigned int i = 0; i < 12; ++i)
+    {
+       if (virDomainUndefine(vDomPtr) == 0)
+           break;
+
+        sleep(5);
+    }
 
     virDomainFree(vDomPtr);
 
