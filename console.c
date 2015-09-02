@@ -25,7 +25,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     unsigned int KdbgHit = 0;
     unsigned int Cont = 0;
     bool AlreadyBooted = false;
-    bool Assert = false;
+    bool Prompt = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -248,20 +248,20 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
 
                 if (KdbgHit == 1)
                 {
-                    /* If we have an assert break once
+                    /* If we have a call to RtlAssert(),  break once
                      * Otherwise we hit Kdbg for the first time, get a backtrace for the log
                      */
-                    if (safewriteex(ttyfd, (Assert ? "o\r" : "bt\r"), (Assert ? 2 : 3), timeout) < 0
+                    if (safewriteex(ttyfd, (Prompt ? "o\r" : "bt\r"), (Prompt ? 2 : 3), timeout) < 0
                         && errno == EWOULDBLOCK)
                     {
                         /* timeout */
                         SysregPrintf("timeout\n");
                         Ret = EXIT_CONTINUE;
                         goto cleanup;
-                        /* No need to reset Assert here, we will quit */
+                        /* No need to reset Prompt here, we will quit */
                     }
 
-                    Assert = false;
+                    Prompt = false;
 
                     continue;
                 }
@@ -308,8 +308,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             }
             else if (strstr(Buffer, "Break repea"))
             {
-                /* Next kdb prompt will be for an assert */
-                Assert = true;
+                /* This is a call to DbgPrompt, next kdb prompt will be for selecting behavior */
+                Prompt = true;
             }
             else if (strstr(Buffer, "SYSREG_ROSAUTOTEST_FAILURE"))
             {
