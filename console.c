@@ -261,7 +261,13 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                         /* No need to reset Prompt here, we will quit */
                     }
 
-                    Prompt = false;
+                    if (Prompt)
+                    {
+                        /* We're not prompted afterwards, so reset */
+                        Prompt = false;
+                        /* On next hit, we'll have broken once, so prepare for bt */
+                        KdbgHit = 0;
+                    }
 
                     continue;
                 }
