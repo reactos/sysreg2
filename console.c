@@ -120,8 +120,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 (fds[i].revents & POLLHUP) ||
                 (fds[i].revents & POLLERR)))
             {
-                SysregPrintf("socket error\n");
-                Ret = EXIT_DONT_CONTINUE;
+                /* This might indicate VM shutdown (KVM), so continue and move to next stage */
+                Ret = EXIT_CONTINUE;
                 goto cleanup;
             }
 
