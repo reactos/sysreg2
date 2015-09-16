@@ -26,6 +26,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     unsigned int Cont = 0;
     bool AlreadyBooted = false;
     bool Prompt = false;
+    bool CheckpointReached = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -325,8 +326,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             else if (*AppSettings.Stage[stage].Checkpoint && strstr(Buffer, AppSettings.Stage[stage].Checkpoint))
             {
                 /* We reached a checkpoint, so return success */
-                Ret = EXIT_CHECKPOINT_REACHED;
-                goto cleanup;
+                CheckpointReached = true;
             }
         }
     }
@@ -336,5 +336,5 @@ cleanup:
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &ttyattr);
     close(ttyfd);
 
-    return Ret;
+    return (CheckpointReached ? EXIT_CHECKPOINT_REACHED : Ret);
 }
