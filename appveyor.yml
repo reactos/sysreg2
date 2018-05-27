@@ -1,0 +1,17 @@
+image: Ubuntu
+
+version: sysreg2.appveyor.{build}
+skip_branch_with_pr: true
+clone_depth: 5
+clone_folder: /sysreg2_workdir
+
+install:
+  - sh: sudo apt-get -q=2 update
+  - sh: sudo DEBIAN_FRONTEND=noninteractive apt-get -q=2 install libvirt-dev libxml2-dev > /dev/null
+
+build_script:
+  - sh: make
+
+test: off
+
+deploy: off
