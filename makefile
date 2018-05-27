@@ -20,7 +20,6 @@ OBJS_CPP := $(SRCS_CPP:.cpp=.o)
 
 $(TARGET): $(OBJS_C) $(OBJS_CPP)
 	$(CXX) $(LFLAGS) -o $@ $(OBJS_CPP) $(OBJS_C) $(LIBS)
-	rm revision.c
 
 .c.o: revision.c $<
 	$(CC) $(INC) $(CFLAGS) -c $< -o $@
@@ -36,3 +35,4 @@ clean:
 	-@rm $(TARGET)
 	-@rm $(OBJS_C)
 	-@rm $(OBJS_CPP)
+	-@rm revision.c
