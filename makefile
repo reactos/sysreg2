@@ -31,8 +31,8 @@ revision.c:
 	echo ';' >> revision.c
 
 .PHONY: clean
+
 clean:
 	-@rm $(TARGET)
 	-@rm $(OBJS_C)
 	-@rm $(OBJS_CPP)
-					
