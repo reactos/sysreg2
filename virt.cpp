@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
     InitializeModuleList();
 
-    SysregPrintf("sysreg2 r%d starting\n", SVNRev);
+    SysregPrintf("sysreg2 %s starting\n", gGitCommit);
 
     if (!LoadSettings(argc > 1 ? argv[1] : "sysreg.xml"))
     {

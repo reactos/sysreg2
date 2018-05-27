@@ -26,9 +26,9 @@ $(TARGET): $(OBJS_C) $(OBJS_CPP)
 	$(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 revision.c:
-	echo 'const int SVNRev = ' > revision.c
-	LC_ALL=C LANG=C svn info | grep Revision | cut -f 2 -d " " >> revision.c
-	echo ';' >> revision.c
+	echo -n 'const char gGitCommit[] = "' > revision.c
+	echo -n $$(git describe --abbrev=7 --long --always) >> revision.c
+	echo '";' >> revision.c
 
 .PHONY: clean
 

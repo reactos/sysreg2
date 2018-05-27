@@ -48,7 +48,7 @@ extern "C"
 {
 #endif
 
-extern const int SVNRev;
+extern const char gGitCommit[];
 
 typedef struct _stage
 {
