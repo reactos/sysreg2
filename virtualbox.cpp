@@ -32,6 +32,12 @@ void VirtualBox::InitializeDisk()
 
 bool VirtualBox::PrepareSerialPort()
 {
+    char vboxmanage_cmdline[300];
+
+    /* VirtualBox 5.x serial port output is unbearably slow by default, fix that! */
+    sprintf(vboxmanage_cmdline, "VBoxManage setextradata %s VBoxInternal/Devices/serial/0/Config/YieldOnLSRRead 1", AppSettings.Name);
+    Execute(vboxmanage_cmdline);
+
     return CreateLocalSocket();
 }
 

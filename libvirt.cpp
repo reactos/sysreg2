@@ -123,15 +123,15 @@ bool LibVirt::LaunchMachine(const char* XmlFileName, const char* BootDevice)
     xmlFreeDoc(xml);
     xmlXPathFreeContext(ctxt);
 
-    if (!PrepareSerialPort())
-    {
-        return false;
-    }
-
     vDom = virDomainDefineXML(vConn, buffer);
     xmlFree((xmlChar*)buffer);
     if (vDom)
     {
+        if (!PrepareSerialPort())
+        {
+            return false;
+        }
+
         if (virDomainCreate(vDom) != 0)
         {
             virDomainUndefine(vDom);
