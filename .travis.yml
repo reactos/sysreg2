@@ -1,7 +1,7 @@
 language: bash
 
 before_script:
-        - sudo apt install -y libvirt-dev libxml2-dev
+        - sudo apt install -y libvirt-dev libxml2-dev libxen-dev 
 
 script:
         - make
