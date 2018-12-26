@@ -113,6 +113,7 @@ bool ResolveAddressFromFile(char* Buffer, size_t BufferSize, const char* Data);
 extern const char* OutputPath;
 extern Settings AppSettings;
 extern ModuleListEntry* ModuleList;
+bool BreakToDebugger(void);
 
 #ifdef __cplusplus
 }

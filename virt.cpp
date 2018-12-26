@@ -14,6 +14,20 @@ const char DefaultOutputPath[] = "output-i386";
 const char* OutputPath;
 Settings AppSettings;
 ModuleListEntry* ModuleList;
+Machine * TestMachine = 0;
+
+/* Wrapper for C code */
+bool BreakToDebugger(void)
+{
+    /* We need a machine started */
+    if (TestMachine == 0)
+    {
+        return false;
+    }
+
+    /* Call the C++ method */
+    return TestMachine->BreakToDebugger();
+}
 
 int main(int argc, char **argv)
 {
@@ -21,7 +35,6 @@ int main(int argc, char **argv)
     char console[50];
     unsigned int Retries;
     unsigned int Stage;
-    Machine * TestMachine = 0;
 
     /* Get the output path to the built ReactOS files */
     OutputPath = getenv("ROS_OUTPUT");

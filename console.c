@@ -27,6 +27,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     bool AlreadyBooted = false;
     bool Prompt = false;
     bool CheckpointReached = false;
+    bool BrokeToDebugger = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -100,10 +101,17 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
         }
         else if (got == 0)
         {
-            /* timeout */
+            /* timeout - only break once then, quit */
             SysregPrintf("timeout\n");
-            Ret = EXIT_CONTINUE;
-            goto cleanup;
+            if (!BreakToDebugger() || BrokeToDebugger)
+            {
+                Ret = EXIT_CONTINUE;
+                goto cleanup;
+            }
+            else
+            {
+                BrokeToDebugger = true;
+            }
         }
 
         /* Check for global timeout */
@@ -213,7 +221,10 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     goto cleanup;
                 }
                 else
+                {
                     AlreadyBooted = true;
+                    BrokeToDebugger = false;
+                }
             }
 
             /* Detect whether the same line appears over and over again.
@@ -276,7 +287,10 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 {
                     ++Cont;
 
-                    if (Cont <= AppSettings.MaxConts)
+                    /* We won't cont if we reached max tries, or if we manually
+                     * broke to debugger (timeout?)
+                     */
+                    if (Cont <= AppSettings.MaxConts && !BrokeToDebugger)
                     {
                         KdbgHit = 0;
 

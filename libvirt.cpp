@@ -204,3 +204,19 @@ bool LibVirt::IsConnected() const
 {
     return (vConn != NULL);
 }
+
+bool LibVirt::BreakToDebugger() const
+{
+    int ret;
+    unsigned int keycodes[2];
+
+    /* If VM not running, do nothing */
+    if (vDom == NULL)
+        return false;
+
+    /* Otherwise, send tab + k */
+    keycodes[0] = 0x9; /* TAB */
+    keycodes[1] = 0x4B; /* K */
+    ret = virDomainSendKey(vDom, VIR_KEYCODE_SET_WIN32, 10, &keycodes[0], 2, 0);
+    return (ret == 0);
+}

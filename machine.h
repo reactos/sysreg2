@@ -25,6 +25,7 @@ public:
     virtual void ShutdownMachine() = 0;
     virtual void CloseSerialPort() = 0;
     virtual bool IsConnected() const = 0;
+    virtual bool BreakToDebugger() const = 0;
 
     virtual ~Machine() {};
 };
@@ -43,6 +44,7 @@ public:
     virtual void ShutdownMachine();
     virtual void CloseSerialPort();
     virtual bool IsConnected() const;
+    virtual bool BreakToDebugger() const;
 
 protected:
     virConnectPtr vConn;
