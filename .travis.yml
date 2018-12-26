@@ -1,6 +1,7 @@
 language: bash
 
 before_script:
+        - sudo apt update
         - sudo apt install -y libvirt-dev libxml2-dev libxen-dev 
 
 script:
