@@ -1,0 +1,7 @@
+language: bash
+
+before_script:
+        - sudo apt install libvirt-dev libxml2-dev
+
+script:
+        - make
