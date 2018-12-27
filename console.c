@@ -287,10 +287,8 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                 {
                     ++Cont;
 
-                    /* We won't cont if we reached max tries, or if we manually
-                     * broke to debugger (timeout?)
-                     */
-                    if (Cont <= AppSettings.MaxConts && !BrokeToDebugger)
+                    /* We won't cont if we reached max tries */
+                    if (Cont <= AppSettings.MaxConts)
                     {
                         KdbgHit = 0;
 
@@ -299,6 +297,13 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                         {
                             /* timeout */
                             SysregPrintf("timeout\n");
+                            Ret = EXIT_CONTINUE;
+                            goto cleanup;
+                        }
+
+                        /* If we broke to debugger, we timed out, so reboot the VM */
+                        if (BrokeToDebugger)
+                        {
                             Ret = EXIT_CONTINUE;
                             goto cleanup;
                         }
