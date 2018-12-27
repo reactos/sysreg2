@@ -172,9 +172,21 @@ void LibVirt::ShutdownMachine()
      */
     virDomainGetInfo(vDom, &info);
 
-    /* Kill the VM - if running */
+    /* Shutdown the VM - if running */
     if (info.state != VIR_DOMAIN_SHUTOFF)
-        virDomainDestroy(vDom);
+    {
+        /* We will first try a graceful shutdown */
+        virDomainReboot(vDom, VIR_DOMAIN_REBOOT_ACPI_POWER_BTN);
+
+        sleep(3);
+
+        /* Is the VM shut? */
+        virDomainGetInfo(vDom, &info);
+
+        /* Kill the VM - if running */
+        if (info.state != VIR_DOMAIN_SHUTOFF)
+            virDomainDestroy(vDom);
+    }
 
     for (unsigned int i = 0; i < 12; ++i)
     {
