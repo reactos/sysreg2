@@ -288,7 +288,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                     ++Cont;
 
                     /* We won't cont if we reached max tries */
-                    if (Cont <= AppSettings.MaxConts)
+                    if (Cont <= AppSettings.MaxConts || BrokeToDebugger)
                     {
                         KdbgHit = 0;
 
