@@ -102,9 +102,9 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
         else if (got == 0)
         {
             /* timeout - only break once then, quit */
-            SysregPrintf("timeout\n");
             if (!BreakToDebugger() || BrokeToDebugger)
             {
+                SysregPrintf("timeout\n");
                 Ret = EXIT_CONTINUE;
                 goto cleanup;
             }
@@ -301,11 +301,10 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
                             goto cleanup;
                         }
 
-                        /* If we broke to debugger, we timed out, so reboot the VM */
+                        /* Reduce timeout to let ROS properly shutdown (if possible) */
                         if (BrokeToDebugger)
                         {
-                            Ret = EXIT_CONTINUE;
-                            goto cleanup;
+                            timeout = 5000;
                         }
 
                         continue;
