@@ -93,6 +93,16 @@ bool LoadSettings(const char* XmlConfig)
     if (obj)
         xmlXPathFreeObject(obj);
 
+    obj = xmlXPathEval(BAD_CAST"number(/settings/general/breakontimeout/@value)",ctxt);
+    if ((obj != NULL) && (obj->type == XPATH_NUMBER))
+    {
+        AppSettings.BreakOnTimeOut = false;
+        if ((unsigned int)obj->floatval == 1)
+            AppSettings.BreakOnTimeOut = true;
+    }
+    if (obj)
+        xmlXPathFreeObject(obj);
+
     obj = xmlXPathEval(BAD_CAST"number(/settings/general/maxcachehits/@value)",ctxt);
     if ((obj != NULL) && (obj->type == XPATH_NUMBER))
     {

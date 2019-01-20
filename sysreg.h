@@ -62,6 +62,7 @@ typedef struct _Settings
 {
     int Timeout;
     int GlobalTimeout;
+    bool BreakOnTimeOut;
     char Filename[255];
     char Name[80];
     char HardDiskImage[255];

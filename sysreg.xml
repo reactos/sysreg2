@@ -10,6 +10,9 @@
 		     The VM will be killed even if it is still verbose -->
 		<globaltimeout s="3600"/>
 
+		<!-- enter KDBG before killing the VM on timeout -->
+		<breakontimeout value="1"/>
+
 		<!-- size of the hdd image in MB -->
 		<hdd size="2048"/>
 

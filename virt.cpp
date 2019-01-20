@@ -25,6 +25,12 @@ bool BreakToDebugger(void)
         return false;
     }
 
+    /* Don't break if configured not to do it */
+    if (!AppSettings.BreakOnTimeOut)
+    {
+        return false;
+    }
+
     /* Call the C++ method */
     return TestMachine->BreakToDebugger();
 }
