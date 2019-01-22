@@ -28,6 +28,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     bool Prompt = false;
     bool CheckpointReached = false;
     bool BrokeToDebugger = false;
+    bool MonitorStdin = false;
 
     /* Initialize CacheBuffer with an empty string */
     *CacheBuffer = 0;
@@ -60,36 +61,39 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
     }
 
     /* We also monitor STDIN_FILENO, so a user can cancel the process with ESC */
-    if (tcgetattr(STDIN_FILENO, &ttyattr) < 0)
+    if (tcgetattr(STDIN_FILENO, &ttyattr) >= 0)
     {
-        SysregPrintf("tcgetattr failed with error %d\n", errno);
-        close(ttyfd);
-        return Ret;
+        rawattr = ttyattr;
+        rawattr.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+                                         | IGNCR | ICRNL | IXON);
+        rawattr.c_lflag &= ~(ICANON | ECHO | ECHONL);
+        rawattr.c_oflag &= ~OPOST;
+        rawattr.c_cflag &= ~(CSIZE | PARENB);
+        rawattr.c_cflag |= CS8;
+
+        if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawattr) >= 0)
+        {
+            MonitorStdin = true;
+        }
     }
 
-    rawattr = ttyattr;
-    rawattr.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
-                                     | IGNCR | ICRNL | IXON);
-    rawattr.c_lflag &= ~(ICANON | ECHO | ECHONL);
-    rawattr.c_oflag &= ~OPOST;
-    rawattr.c_cflag &= ~(CSIZE | PARENB);
-    rawattr.c_cflag |= CS8;
-
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawattr) < 0)
+    if (!MonitorStdin)
     {
-        SysregPrintf("tcsetattr failed with error %d\n", errno);
-        close(ttyfd);
-        return Ret;
+        SysregPrintf("No STDIN, sysreg2 won't monitor it\n");
     }
 
     for(;;)
     {
         struct pollfd fds[] = {
-            { STDIN_FILENO, POLLIN, 0 },
             { ttyfd, POLLIN | POLLHUP | POLLERR, 0 },
+            { STDIN_FILENO, POLLIN, 0 }, /* Always keep it as the end of the FDs */
         };
 
-        got = poll(fds, (sizeof(fds) / sizeof(struct pollfd)), timeout);
+        nfds_t nfds = (sizeof(fds) / sizeof(struct pollfd));
+        if (!MonitorStdin)
+            --nfds;
+
+        got = poll(fds, nfds, timeout);
         if (got < 0)
         {
             /* Just try it again on simple errors */
@@ -123,7 +127,7 @@ int ProcessDebugData(const char* tty, int timeout, int stage )
             goto cleanup;
         }
 
-        for (i = 0; i < (sizeof(fds) / sizeof(struct pollfd)); i++)
+        for (i = 0; i < nfds; i++)
         {
             if ((fds[i].fd == ttyfd) && (
                 (fds[i].revents & POLLHUP) ||
